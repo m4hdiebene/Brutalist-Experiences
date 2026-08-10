@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import MarqueeTicker from './components/MarqueeTicker';
 import CustomCursor from './components/CustomCursor';
@@ -23,8 +23,14 @@ function ScrollToTop() {
 }
 
 export default function App() {
+  const [theme, setTheme] = useState('light'); // Light mode is default base
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
   return (
-    <HashRouter>
+    <BrowserRouter>
       <ScrollToTop />
       <div className="app-container">
         {/* Background Architectural Grid Lines */}
@@ -34,7 +40,7 @@ export default function App() {
         <CustomCursor />
 
         {/* Top Continuous Marquee Ticker */}
-        <MarqueeTicker />
+        <MarqueeTicker theme={theme} setTheme={setTheme} />
 
         {/* Multi-world Navigation Header */}
         <Navbar />
@@ -55,6 +61,6 @@ export default function App() {
         {/* Industrial Footer */}
         <Footer />
       </div>
-    </HashRouter>
+    </BrowserRouter>
   );
 }

@@ -94,7 +94,7 @@ export default function Home() {
 
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem' }}>
           <span className="brutal-badge">ARCHITECTURAL HUB</span>
-          <span style={{ fontSize: '0.85rem', color: 'var(--acid-lime)' }}>[SEPARATE PAGES // ONLINE]</span>
+          <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-muted)' }}>[SEPARATE PAGES // LIGHT BASE]</span>
         </div>
 
         {/* Hero Title */}
@@ -105,7 +105,7 @@ export default function Home() {
           style={{ marginBottom: '1.5rem', cursor: 'pointer' }}
         >
           BRUTALIST <br />
-          <span style={{ color: 'var(--acid-lime)', textShadow: '4px 4px 0px #000' }}>EXPERIENCES</span>
+          <span style={{ color: 'var(--acid-red)' }}>EXPERIENCES</span>
         </h1>
 
         <p style={{
@@ -114,7 +114,8 @@ export default function Home() {
           maxWidth: '900px',
           lineHeight: '1.4',
           marginBottom: '2.5rem',
-          color: '#dddddd'
+          color: 'var(--text-primary)',
+          fontWeight: 700
         }}>
           AN UNFORGIVING ARCHITECTURE OF SEPARATE BRUTALIST WORLD PAGES. EXPLORE CYBER TERMINALS, KINETIC TYPOGRAPHY PHYSICS, WEB AUDIO SYNTHESIZERS, AND 3D SPATIAL MONOLITHS AT INDIVIDUAL URL PATHS.
         </p>
@@ -150,7 +151,7 @@ export default function Home() {
         }}>
           <div>
             <h2 className="brutal-sub-title">// SEPARATE WORLD PAGE DIRECTORY</h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Click any card to navigate to its dedicated page URL.</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontWeight: 600 }}>Click any card to navigate to its dedicated page URL.</p>
           </div>
           <div className="brutal-tag">5 DISTINCT PAGES</div>
         </div>
@@ -171,7 +172,6 @@ export default function Home() {
                   flexDirection: 'column',
                   justifyContent: 'space-between',
                   minHeight: '340px',
-                  background: 'var(--bg-secondary)',
                   borderTop: `6px solid ${w.accent}`
                 }}
                 onMouseEnter={() => audioEngine.playBeep(600, 0.03)}
@@ -193,9 +193,9 @@ export default function Home() {
                     </span>
                     <div style={{
                       padding: '0.6rem',
-                      background: '#000000',
-                      border: '2px solid #ffffff',
-                      color: w.accent
+                      background: 'var(--text-primary)',
+                      border: '2px solid var(--bg-primary)',
+                      color: 'var(--bg-primary)'
                     }}>
                       <Icon size={24} />
                     </div>
@@ -206,16 +206,18 @@ export default function Home() {
                     fontSize: '1.5rem',
                     fontWeight: 800,
                     marginBottom: '0.75rem',
-                    textTransform: 'uppercase'
+                    textTransform: 'uppercase',
+                    color: 'var(--text-primary)'
                   }}>
                     {w.title}
                   </h3>
 
                   <p style={{
                     fontSize: '0.88rem',
-                    color: '#aaaaaa',
+                    color: 'var(--text-muted)',
                     lineHeight: '1.5',
-                    marginBottom: '1.5rem'
+                    marginBottom: '1.5rem',
+                    fontWeight: 600
                   }}>
                     {w.desc}
                   </p>
@@ -244,11 +246,9 @@ export default function Home() {
       </section>
 
       {/* Brutalist Manifesto Accordion */}
-      <section style={{
+      <section className="brutal-card" style={{
         padding: '3rem',
-        background: 'var(--bg-secondary)',
-        border: 'var(--border-thick)',
-        boxShadow: 'var(--shadow-lime)',
+        boxShadow: 'var(--shadow-hard)',
         position: 'relative',
         marginBottom: '4rem'
       }}>
@@ -259,14 +259,14 @@ export default function Home() {
           flexWrap: 'wrap',
           gap: '1rem',
           marginBottom: '2rem',
-          borderBottom: '2px solid #444',
+          borderBottom: '2px solid var(--text-primary)',
           paddingBottom: '1rem'
         }}>
           <div>
-            <h2 className="brutal-sub-title" style={{ color: '#ffffff' }}>
+            <h2 className="brutal-sub-title">
               // THE BRUTALIST MANIFESTO
             </h2>
-            <p style={{ color: 'var(--acid-lime)', fontSize: '0.85rem' }}>CORE ARCHITECTURAL RULES OF THIS DIGITAL EXPERIMENTAL PLATFORM</p>
+            <p style={{ color: 'var(--acid-red)', fontSize: '0.85rem', fontWeight: 800 }}>CORE ARCHITECTURAL RULES OF THIS DIGITAL EXPERIMENTAL PLATFORM</p>
           </div>
 
           <button
@@ -283,13 +283,14 @@ export default function Home() {
 
         {rawView ? (
           <pre style={{
-            background: '#000000',
+            background: 'var(--bg-tertiary)',
             padding: '1.5rem',
-            border: '2px solid var(--acid-lime)',
-            color: 'var(--acid-lime)',
+            border: '2px solid var(--text-primary)',
+            color: 'var(--text-primary)',
             fontFamily: 'var(--font-mono)',
             fontSize: '0.85rem',
-            overflowX: 'auto'
+            overflowX: 'auto',
+            fontWeight: 700
           }}>
             {JSON.stringify(manifestoItems, null, 2)}
           </pre>
@@ -299,8 +300,8 @@ export default function Home() {
               <div 
                 key={idx}
                 style={{
-                  border: manifestoOpen === idx ? '3px solid var(--acid-lime)' : '2px solid #333333',
-                  background: manifestoOpen === idx ? '#000000' : 'var(--bg-tertiary)',
+                  border: manifestoOpen === idx ? '3px solid var(--text-primary)' : '2px solid var(--text-muted)',
+                  background: manifestoOpen === idx ? 'var(--bg-tertiary)' : 'var(--bg-secondary)',
                   transition: 'all 0.15s ease'
                 }}
               >
@@ -314,7 +315,7 @@ export default function Home() {
                     padding: '1rem 1.2rem',
                     background: 'transparent',
                     border: 'none',
-                    color: '#ffffff',
+                    color: 'var(--text-primary)',
                     fontFamily: 'var(--font-heading)',
                     fontSize: '1.1rem',
                     fontWeight: 800,
@@ -327,7 +328,7 @@ export default function Home() {
                 >
                   <span>{item.title}</span>
                   <span style={{
-                    color: 'var(--acid-lime)',
+                    color: 'var(--acid-red)',
                     fontSize: '1.4rem',
                     fontWeight: 900
                   }}>
@@ -338,10 +339,11 @@ export default function Home() {
                 {manifestoOpen === idx && (
                   <div style={{
                     padding: '0 1.2rem 1.2rem 1.2rem',
-                    color: '#cccccc',
+                    color: 'var(--text-primary)',
                     fontSize: '0.9rem',
                     lineHeight: '1.6',
-                    borderTop: '1px solid #222'
+                    borderTop: '1px solid var(--text-muted)',
+                    fontWeight: 600
                   }}>
                     {item.content}
                   </div>

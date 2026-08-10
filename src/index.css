@@ -1,52 +1,77 @@
 /* ==========================================================================
-   BRUTALIST DESIGN SYSTEM & GLOBAL STYLES
+   BRUTALIST DESIGN SYSTEM & DYNAMIC THEME ENGINE (LIGHT MODE BASE)
    ========================================================================== */
 
-:root {
-  /* Color Palette - Raw Monochrome & Acid Accents */
-  --bg-primary: #0a0a0a;
-  --bg-secondary: #141414;
-  --bg-tertiary: #1f1f1f;
-  --text-primary: #ffffff;
-  --text-muted: #888888;
-  --text-dark: #000000;
+/* LIGHT MODE (DEFAULT BASE) */
+:root, [data-theme="light"] {
+  /* Base Palette */
+  --bg-primary: #f4f4f0;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e2e2dc;
+  --text-primary: #000000;
+  --text-muted: #555555;
+  --text-inverse: #ffffff;
   
-  /* Acid Neons */
-  --acid-lime: #ccff00;
-  --acid-red: #ff2e00;
-  --acid-cyan: #00ffff;
-  --acid-magenta: #ff00ff;
-  --acid-yellow: #fff500;
+  /* Acid Neons (Optimized for Light Mode High-Contrast) */
+  --acid-lime: #76cc00;
+  --acid-red: #e60000;
+  --acid-cyan: #0088cc;
+  --acid-magenta: #cc00cc;
+  --acid-yellow: #ffcc00;
   
   /* Architectural & Border Tokens */
-  --border-thick: 4px solid #ffffff;
-  --border-thin: 2px solid #ffffff;
+  --border-thick: 4px solid #000000;
+  --border-thin: 2px solid #000000;
   --border-dark: 4px solid #000000;
   --border-lime: 4px solid var(--acid-lime);
   --border-red: 4px solid var(--acid-red);
   
   /* Hard Drop Shadows (No Blur) */
-  --shadow-hard: 6px 6px 0px #ffffff;
-  --shadow-hard-dark: 6px 6px 0px #000000;
+  --shadow-hard: 6px 6px 0px #000000;
+  --shadow-hard-inverse: 6px 6px 0px #ffffff;
   --shadow-lime: 6px 6px 0px var(--acid-lime);
   --shadow-red: 6px 6px 0px var(--acid-red);
   --shadow-cyan: 6px 6px 0px var(--acid-cyan);
-  --shadow-press: 2px 2px 0px #ffffff;
   
   /* Typography */
   --font-mono: 'JetBrains Mono', monospace;
   --font-heading: 'Space Grotesk', sans-serif;
   --font-display: 'Syne', sans-serif;
   
-  /* System Spacing */
-  --space-unit: 8px;
+  /* Blueprint Grid */
+  --grid-line-color: rgba(0, 0, 0, 0.06);
+}
+
+/* DARK MODE OVERRIDE */
+[data-theme="dark"] {
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #141414;
+  --bg-tertiary: #1f1f1f;
+  --text-primary: #ffffff;
+  --text-muted: #aaaaaa;
+  --text-inverse: #000000;
+  
+  --acid-lime: #ccff00;
+  --acid-red: #ff2e00;
+  --acid-cyan: #00ffff;
+  --acid-magenta: #ff00ff;
+  --acid-yellow: #fff500;
+  
+  --border-thick: 4px solid #ffffff;
+  --border-thin: 2px solid #ffffff;
+  --border-dark: 4px solid #000000;
+  
+  --shadow-hard: 6px 6px 0px #ffffff;
+  --shadow-hard-inverse: 6px 6px 0px #000000;
+  
+  --grid-line-color: rgba(255, 255, 255, 0.04);
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  cursor: none !important; /* Managed by custom brutalist cursor */
+  cursor: none !important; /* Custom crosshair cursor */
 }
 
 html, body {
@@ -58,23 +83,24 @@ html, body {
   overflow-x: hidden;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* Custom Brutalist Scrollbar */
 ::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
 }
 
 ::-webkit-scrollbar-track {
   background: var(--bg-secondary);
-  border-left: 2px solid var(--text-muted);
+  border-left: 2px solid var(--text-primary);
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--acid-lime);
-  border: 2px solid #000000;
-  box-shadow: 2px 2px 0px #000000;
+  border: 2px solid var(--text-primary);
+  box-shadow: 2px 2px 0px var(--text-primary);
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -97,10 +123,9 @@ html, body {
   min-height: 100vh;
   position: relative;
   background: 
-    radial-gradient(circle at 50% 50%, rgba(204, 255, 0, 0.03) 0%, transparent 60%),
-    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 100% 100%, 40px 40px, 40px 40px;
+    linear-gradient(to right, var(--grid-line-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line-color) 1px, transparent 1px);
+  background-size: 40px 40px, 40px 40px;
 }
 
 .main-content {
@@ -118,8 +143,8 @@ html, body {
   pointer-events: none;
   z-index: 1;
   background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    linear-gradient(to right, var(--grid-line-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line-color) 1px, transparent 1px);
   background-size: 80px 80px;
 }
 
@@ -138,10 +163,10 @@ html, body {
   font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 1px;
-  background: #ffffff;
-  color: #000000;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
   border: var(--border-thick);
-  box-shadow: var(--shadow-lime);
+  box-shadow: var(--shadow-hard);
   transition: all 0.1s ease;
   user-select: none;
   text-decoration: none;
@@ -156,7 +181,7 @@ html, body {
 
 .brutal-btn:active {
   transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0px var(--acid-lime);
+  box-shadow: 2px 2px 0px var(--text-primary);
 }
 
 .brutal-btn-red {
@@ -166,14 +191,14 @@ html, body {
 }
 
 .brutal-btn-red:hover {
-  background: #ffffff;
-  color: #000000;
+  background: var(--text-primary);
+  color: var(--bg-primary);
   box-shadow: 9px 9px 0px var(--acid-red);
 }
 
 .brutal-btn-cyan {
   background: var(--acid-cyan);
-  color: #000000;
+  color: #ffffff;
   box-shadow: var(--shadow-hard);
 }
 
@@ -185,14 +210,14 @@ html, body {
 
 .brutal-btn-outline {
   background: transparent;
-  color: #ffffff;
+  color: var(--text-primary);
   border: var(--border-thick);
   box-shadow: var(--shadow-hard);
 }
 
 .brutal-btn-outline:hover {
-  background: #ffffff;
-  color: #000000;
+  background: var(--text-primary);
+  color: var(--bg-primary);
   box-shadow: 9px 9px 0px var(--acid-lime);
 }
 
@@ -202,6 +227,7 @@ html, body {
 
 .brutal-card {
   background: var(--bg-secondary);
+  color: var(--text-primary);
   border: var(--border-thick);
   box-shadow: var(--shadow-hard);
   padding: 1.5rem;
@@ -232,22 +258,23 @@ html, body {
   padding: 0.2rem 0.5rem;
   font-size: 0.7rem;
   background: var(--bg-tertiary);
-  border: 1px solid var(--text-muted);
+  border: 1px solid var(--text-primary);
   color: var(--text-primary);
+  font-weight: 700;
 }
 
 /* Structural Corner Markers */
 .corner-marker {
   position: absolute;
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   background: var(--acid-lime);
-  border: 1px solid #000;
+  border: 2px solid var(--text-primary);
 }
-.corner-tl { top: -4px; left: -4px; }
-.corner-tr { top: -4px; right: -4px; }
-.corner-bl { bottom: -4px; left: -4px; }
-.corner-br { bottom: -4px; right: -4px; }
+.corner-tl { top: -5px; left: -5px; }
+.corner-tr { top: -5px; right: -5px; }
+.corner-bl { bottom: -5px; left: -5px; }
+.corner-br { bottom: -5px; right: -5px; }
 
 /* ==========================================================================
    MARQUEE TICKER ANIMATION
@@ -383,6 +410,7 @@ html, body {
   line-height: 0.95;
   text-transform: uppercase;
   letter-spacing: -1px;
+  color: var(--text-primary);
 }
 
 .brutal-sub-title {
@@ -390,5 +418,5 @@ html, body {
   font-size: clamp(1.2rem, 3vw, 2rem);
   font-weight: 700;
   text-transform: uppercase;
-  color: var(--acid-lime);
+  color: var(--text-primary);
 }
