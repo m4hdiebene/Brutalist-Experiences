@@ -1,0 +1,394 @@
+/* ==========================================================================
+   BRUTALIST DESIGN SYSTEM & GLOBAL STYLES
+   ========================================================================== */
+
+:root {
+  /* Color Palette - Raw Monochrome & Acid Accents */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #141414;
+  --bg-tertiary: #1f1f1f;
+  --text-primary: #ffffff;
+  --text-muted: #888888;
+  --text-dark: #000000;
+  
+  /* Acid Neons */
+  --acid-lime: #ccff00;
+  --acid-red: #ff2e00;
+  --acid-cyan: #00ffff;
+  --acid-magenta: #ff00ff;
+  --acid-yellow: #fff500;
+  
+  /* Architectural & Border Tokens */
+  --border-thick: 4px solid #ffffff;
+  --border-thin: 2px solid #ffffff;
+  --border-dark: 4px solid #000000;
+  --border-lime: 4px solid var(--acid-lime);
+  --border-red: 4px solid var(--acid-red);
+  
+  /* Hard Drop Shadows (No Blur) */
+  --shadow-hard: 6px 6px 0px #ffffff;
+  --shadow-hard-dark: 6px 6px 0px #000000;
+  --shadow-lime: 6px 6px 0px var(--acid-lime);
+  --shadow-red: 6px 6px 0px var(--acid-red);
+  --shadow-cyan: 6px 6px 0px var(--acid-cyan);
+  --shadow-press: 2px 2px 0px #ffffff;
+  
+  /* Typography */
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-heading: 'Space Grotesk', sans-serif;
+  --font-display: 'Syne', sans-serif;
+  
+  /* System Spacing */
+  --space-unit: 8px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  cursor: none !important; /* Managed by custom brutalist cursor */
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  overflow-x: hidden;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Brutalist Scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+  border-left: 2px solid var(--text-muted);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--acid-lime);
+  border: 2px solid #000000;
+  box-shadow: 2px 2px 0px #000000;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--acid-red);
+}
+
+/* Selection */
+::selection {
+  background: var(--acid-lime);
+  color: #000000;
+}
+
+/* ==========================================================================
+   LAYOUT STRUCTURE & GRID SYSTEM
+   ========================================================================== */
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(204, 255, 0, 0.03) 0%, transparent 60%),
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 40px 40px, 40px 40px;
+}
+
+.main-content {
+  flex: 1;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* Exposed Construction Blueprint Grid */
+.grid-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+/* ==========================================================================
+   NEO-BRUTALIST BUTTONS & CONTROLS
+   ========================================================================== */
+
+.brutal-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: #ffffff;
+  color: #000000;
+  border: var(--border-thick);
+  box-shadow: var(--shadow-lime);
+  transition: all 0.1s ease;
+  user-select: none;
+  text-decoration: none;
+}
+
+.brutal-btn:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0px var(--acid-lime);
+  background: var(--acid-lime);
+  color: #000000;
+}
+
+.brutal-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px var(--acid-lime);
+}
+
+.brutal-btn-red {
+  background: var(--acid-red);
+  color: #ffffff;
+  box-shadow: var(--shadow-hard);
+}
+
+.brutal-btn-red:hover {
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 9px 9px 0px var(--acid-red);
+}
+
+.brutal-btn-cyan {
+  background: var(--acid-cyan);
+  color: #000000;
+  box-shadow: var(--shadow-hard);
+}
+
+.brutal-btn-cyan:hover {
+  background: var(--acid-magenta);
+  color: #ffffff;
+  box-shadow: 9px 9px 0px var(--acid-cyan);
+}
+
+.brutal-btn-outline {
+  background: transparent;
+  color: #ffffff;
+  border: var(--border-thick);
+  box-shadow: var(--shadow-hard);
+}
+
+.brutal-btn-outline:hover {
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 9px 9px 0px var(--acid-lime);
+}
+
+/* ==========================================================================
+   BRUTALIST CARD & CONTAINER UTILITIES
+   ========================================================================== */
+
+.brutal-card {
+  background: var(--bg-secondary);
+  border: var(--border-thick);
+  box-shadow: var(--shadow-hard);
+  padding: 1.5rem;
+  position: relative;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.brutal-card:hover {
+  transform: translate(-4px, -4px);
+  box-shadow: 10px 10px 0px var(--acid-lime);
+}
+
+.brutal-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  background: var(--acid-lime);
+  color: #000000;
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
+}
+
+.brutal-tag {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.7rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--text-muted);
+  color: var(--text-primary);
+}
+
+/* Structural Corner Markers */
+.corner-marker {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: var(--acid-lime);
+  border: 1px solid #000;
+}
+.corner-tl { top: -4px; left: -4px; }
+.corner-tr { top: -4px; right: -4px; }
+.corner-bl { bottom: -4px; left: -4px; }
+.corner-br { bottom: -4px; right: -4px; }
+
+/* ==========================================================================
+   MARQUEE TICKER ANIMATION
+   ========================================================================== */
+
+.marquee-container {
+  width: 100%;
+  overflow: hidden;
+  background: var(--acid-lime);
+  color: #000000;
+  border-bottom: var(--border-thick);
+  padding: 0.5rem 0;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.marquee-content {
+  display: inline-flex;
+  animation: marquee-scroll 25s linear infinite;
+  gap: 2rem;
+}
+
+@keyframes marquee-scroll {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ==========================================================================
+   CRT SCANLINE & GLITCH FILTERS
+   ========================================================================== */
+
+.crt-scanlines {
+  position: relative;
+}
+
+.crt-scanlines::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%);
+  background-size: 100% 4px;
+  z-index: 10;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* Glitch animation text */
+.glitch-text {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  clip: rect(0, 0, 0, 0);
+}
+
+.glitch-text:hover::before {
+  left: 2px;
+  text-shadow: -2px 0 var(--acid-red);
+  animation: glitch-anim 0.3s infinite linear alternate-reverse;
+}
+
+.glitch-text:hover::after {
+  left: -2px;
+  text-shadow: -2px 0 var(--acid-cyan);
+  animation: glitch-anim2 0.3s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim {
+  0% { clip: rect(10px, 9999px, 30px, 0); }
+  50% { clip: rect(40px, 9999px, 60px, 0); }
+  100% { clip: rect(70px, 9999px, 90px, 0); }
+}
+
+@keyframes glitch-anim2 {
+  0% { clip: rect(60px, 9999px, 80px, 0); }
+  50% { clip: rect(20px, 9999px, 50px, 0); }
+  100% { clip: rect(10px, 9999px, 40px, 0); }
+}
+
+/* Custom Brutalist Crosshair Cursor */
+.custom-cursor-dot {
+  position: fixed;
+  width: 16px;
+  height: 16px;
+  background: var(--acid-lime);
+  border: 2px solid #000;
+  border-radius: 0%;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.05s ease-out, background 0.15s ease;
+  box-shadow: 2px 2px 0px #000000;
+}
+
+.custom-cursor-dot.active {
+  background: var(--acid-red);
+  transform: translate(-50%, -50%) scale(1.6) rotate(45deg);
+}
+
+.custom-cursor-coords {
+  position: fixed;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  background: #000000;
+  color: var(--acid-lime);
+  padding: 2px 5px;
+  border: 1px solid var(--acid-lime);
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(14px, 14px);
+  white-space: nowrap;
+}
+
+/* Section Header Typography */
+.brutal-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  font-weight: 800;
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: -1px;
+}
+
+.brutal-sub-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--acid-lime);
+}
