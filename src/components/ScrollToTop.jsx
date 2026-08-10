@@ -5,13 +5,24 @@ export default function ScrollToTop() {
   const { pathname } = useLocation();
 
   useLayoutEffect(() => {
-    // Strictly ONLY scroll to top when entering a project page (pathname !== '/')
-    // On the Homepage ('/'), do NOT run any scroll to top function!
-    if (pathname === '/') return;
+    // Prevent browser auto scroll restoration from overriding link clicks
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
 
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
+    // When opening ANY project page (pathname !== '/'), force scroll position to top
+    if (pathname !== '/') {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+
+      // Micro-task trigger to guarantee scroll position after layout paint
+      requestAnimationFrame(() => {
+        window.scrollTo(0, 0);
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+      });
+    }
   }, [pathname]);
 
   return null;
