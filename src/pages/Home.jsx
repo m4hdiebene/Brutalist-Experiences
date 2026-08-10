@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Terminal, Type, Disc, Box, Flame, ArrowRight, Zap, Code, Layers, Volume2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Terminal, Type, Disc, Box, Flame, ArrowRight, Code, Volume2 } from 'lucide-react';
 import { audioEngine } from '../utils/audioEngine';
 
-export default function Home({ setActiveWorld }) {
+export default function Home() {
   const [manifestoOpen, setManifestoOpen] = useState(0);
   const [rawView, setRawView] = useState(false);
 
@@ -10,6 +11,7 @@ export default function Home({ setActiveWorld }) {
     {
       id: 'terminal',
       num: '01',
+      path: '/terminal',
       title: 'CYBER TERMINAL CLI',
       desc: 'Interactive retro UNIX/DOS terminal environment with scanlines, memory dump diagnostics, ASCII generators, and custom command parsing.',
       accent: 'var(--acid-lime)',
@@ -19,6 +21,7 @@ export default function Home({ setActiveWorld }) {
     {
       id: 'kinetic-typo',
       num: '02',
+      path: '/kinetic-typo',
       title: 'KINETIC TYPO & GRID',
       desc: 'Vector letter repulsion canvas. Type custom text, distort letterforms with cursor dynamics, alter grid density, and export snapshots.',
       accent: 'var(--acid-cyan)',
@@ -28,6 +31,7 @@ export default function Home({ setActiveWorld }) {
     {
       id: 'audio-matrix',
       num: '03',
+      path: '/audio-matrix',
       title: 'CONCRETE SOUND SYNTH',
       desc: '16-step drum machine & synthesizer powered by Web Audio API with oscilloscope real-time waveform visualization and pattern presets.',
       accent: 'var(--acid-red)',
@@ -37,6 +41,7 @@ export default function Home({ setActiveWorld }) {
     {
       id: 'spatial-void',
       num: '04',
+      path: '/spatial-void',
       title: '3D SPATIAL MONOLITH',
       desc: 'Interactive 3D geometry engine viewport. Light source positioning, explode wireframe controls, concrete texture depth, and orbital rotation.',
       accent: 'var(--acid-magenta)',
@@ -46,6 +51,7 @@ export default function Home({ setActiveWorld }) {
     {
       id: 'anti-design',
       num: '05',
+      path: '/anti-design',
       title: 'ANTI-DESIGN LAB',
       desc: 'Showcase of chaotic neo-brutalist UI components: dynamic sound triggers, brutalist stickers, unhinged sliders, stark notifications.',
       accent: 'var(--acid-yellow)',
@@ -88,10 +94,10 @@ export default function Home({ setActiveWorld }) {
 
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem' }}>
           <span className="brutal-badge">ARCHITECTURAL HUB</span>
-          <span style={{ fontSize: '0.85rem', color: 'var(--acid-lime)' }}>[VER 1.0.0 // ONLINE]</span>
+          <span style={{ fontSize: '0.85rem', color: 'var(--acid-lime)' }}>[SEPARATE PAGES // ONLINE]</span>
         </div>
 
-        {/* Hero Title with Hover Scatter Sound */}
+        {/* Hero Title */}
         <h1 
           className="brutal-title glitch-text"
           data-text="BRUTALIST // EXPERIENCES"
@@ -110,29 +116,25 @@ export default function Home({ setActiveWorld }) {
           marginBottom: '2.5rem',
           color: '#dddddd'
         }}>
-          AN UNFORGIVING ARCHITECTURE OF SEPARATE BRUTALIST WORLDS. EXPLORE CYBER TERMINALS, KINETIC TYPOGRAPHY PHYSICS, WEB AUDIO SYNTHESIZERS, AND 3D SPATIAL MONOLITHS.
+          AN UNFORGIVING ARCHITECTURE OF SEPARATE BRUTALIST WORLD PAGES. EXPLORE CYBER TERMINALS, KINETIC TYPOGRAPHY PHYSICS, WEB AUDIO SYNTHESIZERS, AND 3D SPATIAL MONOLITHS AT INDIVIDUAL URL PATHS.
         </p>
 
         {/* Primary Action Buttons */}
         <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-          <button 
+          <Link 
+            to="/terminal"
             className="brutal-btn"
-            onClick={() => {
-              audioEngine.playClick();
-              setActiveWorld('terminal');
-            }}
+            onClick={() => audioEngine.playClick()}
           >
-            LAUNCH TERMINAL CLI <ArrowRight size={18} />
-          </button>
-          <button 
+            LAUNCH TERMINAL PAGE <ArrowRight size={18} />
+          </Link>
+          <Link 
+            to="/audio-matrix"
             className="brutal-btn brutal-btn-red"
-            onClick={() => {
-              audioEngine.playClick();
-              setActiveWorld('audio-matrix');
-            }}
+            onClick={() => audioEngine.playClick()}
           >
-            PLAY SOUND MATRIX <Volume2 size={18} />
-          </button>
+            OPEN SOUND MATRIX PAGE <Volume2 size={18} />
+          </Link>
         </div>
       </section>
 
@@ -147,10 +149,10 @@ export default function Home({ setActiveWorld }) {
           marginBottom: '2.5rem'
         }}>
           <div>
-            <h2 className="brutal-sub-title">// WORLD SELECTION PORTAL</h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Select an experience world to jump directly into its environment.</p>
+            <h2 className="brutal-sub-title">// SEPARATE WORLD PAGE DIRECTORY</h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Click any card to navigate to its dedicated page URL.</p>
           </div>
-          <div className="brutal-tag">5 WORLDS READY</div>
+          <div className="brutal-tag">5 DISTINCT PAGES</div>
         </div>
 
         <div style={{
@@ -226,16 +228,14 @@ export default function Home({ setActiveWorld }) {
                     ))}
                   </div>
 
-                  <button
+                  <Link
+                    to={w.path}
                     className="brutal-btn"
                     style={{ width: '100%', padding: '0.6rem 1rem', fontSize: '0.85rem' }}
-                    onClick={() => {
-                      audioEngine.playClick();
-                      setActiveWorld(w.id);
-                    }}
+                    onClick={() => audioEngine.playClick()}
                   >
-                    ENTER WORLD {w.num} <ArrowRight size={16} />
-                  </button>
+                    GO TO {w.num} PAGE ({w.path}) <ArrowRight size={16} />
+                  </Link>
                 </div>
               </div>
             );

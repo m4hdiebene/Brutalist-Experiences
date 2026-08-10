@@ -1,8 +1,11 @@
 import React from 'react';
+import { NavLink, Link, useLocation } from 'react-router-dom';
 import { Terminal, Type, Disc, Box, Flame, Home } from 'lucide-react';
 import { audioEngine } from '../utils/audioEngine';
 
-export default function Navbar({ activeWorld, setActiveWorld }) {
+export default function Navbar() {
+  const location = useLocation();
+
   const worlds = [
     { id: 'home', label: '00. MONOLITH', path: '/', icon: Home },
     { id: 'terminal', label: '01. TERMINAL CLI', path: '/terminal', icon: Terminal },
@@ -11,11 +14,6 @@ export default function Navbar({ activeWorld, setActiveWorld }) {
     { id: 'spatial-void', label: '04. SPATIAL VOID', path: '/spatial-void', icon: Box },
     { id: 'anti-design', label: '05. ANTI-DESIGN', path: '/anti-design', icon: Flame },
   ];
-
-  const handleNav = (worldId) => {
-    audioEngine.playClick();
-    setActiveWorld(worldId);
-  };
 
   return (
     <header style={{
@@ -36,9 +34,11 @@ export default function Navbar({ activeWorld, setActiveWorld }) {
         flexWrap: 'wrap',
         gap: '1rem'
       }}>
-        {/* Brand Monolith */}
-        <div 
-          onClick={() => handleNav('home')}
+        {/* Brand Link */}
+        <Link 
+          to="/"
+          onClick={() => audioEngine.playClick()}
+          onMouseEnter={() => audioEngine.playBeep(900, 0.03)}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -52,9 +52,9 @@ export default function Navbar({ activeWorld, setActiveWorld }) {
             fontWeight: 800,
             fontSize: '1.1rem',
             letterSpacing: '1px',
-            textTransform: 'uppercase'
+            textTransform: 'uppercase',
+            textDecoration: 'none'
           }}
-          onMouseEnter={() => audioEngine.playBeep(900, 0.03)}
         >
           <div style={{
             width: '12px',
@@ -63,7 +63,7 @@ export default function Navbar({ activeWorld, setActiveWorld }) {
             border: '2px solid #000'
           }} />
           BRUTALIST // EXPERIENCES
-        </div>
+        </Link>
 
         {/* World Navigation Links */}
         <nav style={{
@@ -73,11 +73,12 @@ export default function Navbar({ activeWorld, setActiveWorld }) {
         }}>
           {worlds.map((w) => {
             const Icon = w.icon;
-            const isActive = activeWorld === w.id;
+            const isActive = location.pathname === w.path;
             return (
-              <button
+              <NavLink
                 key={w.id}
-                onClick={() => handleNav(w.id)}
+                to={w.path}
+                onClick={() => audioEngine.playClick()}
                 onMouseEnter={() => audioEngine.playBeep(700, 0.02)}
                 style={{
                   display: 'inline-flex',
@@ -92,12 +93,13 @@ export default function Navbar({ activeWorld, setActiveWorld }) {
                   color: isActive ? '#000000' : '#ffffff',
                   border: isActive ? '3px solid #ffffff' : '2px solid #555555',
                   boxShadow: isActive ? '4px 4px 0px #ffffff' : 'none',
-                  transition: 'all 0.1s ease'
+                  transition: 'all 0.1s ease',
+                  textDecoration: 'none'
                 }}
               >
                 <Icon size={14} />
                 {w.label}
-              </button>
+              </NavLink>
             );
           })}
         </nav>

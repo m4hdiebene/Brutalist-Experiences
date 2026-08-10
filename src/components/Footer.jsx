@@ -1,8 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Cpu, Code2, Shield, Terminal, ArrowUpRight } from 'lucide-react';
 import { audioEngine } from '../utils/audioEngine';
 
-export default function Footer({ setActiveWorld }) {
+export default function Footer() {
   return (
     <footer style={{
       width: '100%',
@@ -40,7 +41,7 @@ export default function Footer({ setActiveWorld }) {
             A raw digital universe built without compromises. High-contrast layout, vector warp physics, Web Audio API sound synthesis, exposed structural coordinates.
           </p>
           <div className="brutal-badge">
-            BUILD // PRODUCTION 1.0.0
+            BUILD // MULTI-PAGE 2.0.0
           </div>
         </div>
 
@@ -57,22 +58,21 @@ export default function Footer({ setActiveWorld }) {
             alignItems: 'center',
             gap: '0.5rem'
           }}>
-            <Terminal size={18} /> WORLD PORTALS
+            <Terminal size={18} /> SEPARATE WORLD PAGES
           </h3>
           <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             {[
-              { id: 'terminal', label: 'WORLD 01 // CYBER TERMINAL CLI' },
-              { id: 'kinetic-typo', label: 'WORLD 02 // KINETIC TYPOGRAPHY' },
-              { id: 'audio-matrix', label: 'WORLD 03 // SOUND SYNTHESIZER' },
-              { id: 'spatial-void', label: 'WORLD 04 // 3D CONCRETE VOID' },
-              { id: 'anti-design', label: 'WORLD 05 // ANTI-DESIGN LAB' },
+              { path: '/terminal', label: 'WORLD 01 // CYBER TERMINAL CLI' },
+              { path: '/kinetic-typo', label: 'WORLD 02 // KINETIC TYPOGRAPHY' },
+              { path: '/audio-matrix', label: 'WORLD 03 // SOUND SYNTHESIZER' },
+              { path: '/spatial-void', label: 'WORLD 04 // 3D CONCRETE VOID' },
+              { path: '/anti-design', label: 'WORLD 05 // ANTI-DESIGN LAB' },
             ].map(item => (
-              <li key={item.id}>
-                <button
-                  onClick={() => {
-                    audioEngine.playClick();
-                    setActiveWorld(item.id);
-                  }}
+              <li key={item.path}>
+                <Link
+                  to={item.path}
+                  onClick={() => audioEngine.playClick()}
+                  onMouseEnter={() => audioEngine.playBeep(800, 0.02)}
                   style={{
                     background: 'transparent',
                     border: 'none',
@@ -83,13 +83,13 @@ export default function Footer({ setActiveWorld }) {
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '0.3rem'
+                    gap: '0.3rem',
+                    textDecoration: 'none'
                   }}
-                  onMouseEnter={() => audioEngine.playBeep(800, 0.02)}
                 >
                   <ArrowUpRight size={14} color="var(--acid-lime)" />
                   {item.label}
-                </button>
+                </Link>
               </li>
             ))}
           </ul>
