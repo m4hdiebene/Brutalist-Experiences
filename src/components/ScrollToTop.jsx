@@ -7,8 +7,13 @@ export default function ScrollToTop() {
   const { pathname } = useLocation();
   const [visible, setVisible] = useState(false);
 
-  // 1. Reset Scroll Position on Route Changes
+  const isProjectPage = pathname !== '/';
+
+  // 1. Scroll-To-Top on Navigation: EXCLUSIVELY for Project Pages
   useLayoutEffect(() => {
+    // If on Homepage, DO NOT run scroll to top!
+    if (!isProjectPage) return;
+
     window.scrollTo(0, 0);
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
@@ -20,13 +25,17 @@ export default function ScrollToTop() {
     }, 10);
 
     return () => clearTimeout(timer);
-  }, [pathname]);
+  }, [pathname, isProjectPage]);
 
-  // 2. Floating TOP Button - ONLY Enabled on Project World Pages (pathname !== '/')
+  // 2. Floating TOP Button: EXCLUSIVELY for Project Pages
   useEffect(() => {
+    if (!isProjectPage) {
+      setVisible(false);
+      return;
+    }
+
     const handleScroll = () => {
-      // Never show TOP button on Homepage (/)
-      if (pathname !== '/' && window.scrollY > 250) {
+      if (window.scrollY > 250) {
         setVisible(true);
       } else {
         setVisible(false);
@@ -35,10 +44,10 @@ export default function ScrollToTop() {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [pathname]);
+  }, [pathname, isProjectPage]);
 
-  // Do not render floating TOP button on Homepage
-  if (pathname === '/' || !visible) return null;
+  // Strictly return null if on Homepage or if not scrolled
+  if (!isProjectPage || !visible) return null;
 
   const scrollToTopManual = () => {
     audioEngine.playClick();
