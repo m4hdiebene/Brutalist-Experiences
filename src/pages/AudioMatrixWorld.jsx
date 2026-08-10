@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Square, RefreshCw, Volume2, Music, Radio } from 'lucide-react';
+import { Play, Square, RefreshCw, Volume2, Music, Radio, Sliders } from 'lucide-react';
 import { audioEngine } from '../utils/audioEngine';
 
 export default function AudioMatrixWorld() {
@@ -7,7 +7,6 @@ export default function AudioMatrixWorld() {
   const [bpm, setBpm] = useState(130);
   const [currentStep, setCurrentStep] = useState(0);
 
-  // 4 tracks x 16 steps matrix grid
   const initialGrid = [
     [true, false, false, false, true, false, false, false, true, false, false, false, true, false, false, false], // Kick
     [false, false, true, false, false, false, true, false, false, false, true, false, false, false, true, false], // Snare
@@ -21,13 +20,13 @@ export default function AudioMatrixWorld() {
   const timerRef = useRef(null);
 
   const trackLabels = [
-    { name: 'KICK', sound: 'kick', color: 'var(--acid-red)' },
-    { name: 'SNARE', sound: 'snare', color: 'var(--acid-lime)' },
-    { name: 'HI-HAT', sound: 'hihat', color: 'var(--acid-cyan)' },
-    { name: 'SYNTH', sound: 'synth', color: 'var(--acid-magenta)' }
+    { name: 'KICK', sound: 'kick', color: '#ff2e00' },
+    { name: 'SNARE', sound: 'snare', color: '#a3e635' },
+    { name: 'HI-HAT', sound: 'hihat', color: '#06b6d4' },
+    { name: 'SYNTH', sound: 'synth', color: '#d946ef' }
   ];
 
-  // Sequencer playback loop
+  // Sequencer loop
   useEffect(() => {
     if (isPlaying) {
       const intervalMs = (60 / bpm / 4) * 1000;
@@ -36,7 +35,6 @@ export default function AudioMatrixWorld() {
         stepRef.current = step;
         setCurrentStep(step);
 
-        // Play active step sounds
         grid.forEach((track, trackIdx) => {
           if (track[step]) {
             audioEngine.playDrum(trackLabels[trackIdx].sound);
@@ -59,13 +57,12 @@ export default function AudioMatrixWorld() {
     let phase = 0;
 
     const renderOscilloscope = () => {
-      ctx.fillStyle = '#050505';
+      ctx.fillStyle = '#050a05';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw gridlines
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+      ctx.strokeStyle = 'rgba(0, 255, 100, 0.15)';
       ctx.lineWidth = 1;
-      for (let x = 0; x < canvas.width; x += 40) {
+      for (let x = 0; x < canvas.width; x += 35) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, canvas.height);
@@ -76,24 +73,23 @@ export default function AudioMatrixWorld() {
       ctx.lineTo(canvas.width, canvas.height / 2);
       ctx.stroke();
 
-      // Waveform line
       ctx.beginPath();
       ctx.lineWidth = 3;
-      ctx.strokeStyle = isPlaying ? 'var(--acid-red)' : 'var(--acid-lime)';
+      ctx.strokeStyle = isPlaying ? '#ff2e00' : '#a3e635';
 
       const width = canvas.width;
       const height = canvas.height;
 
       for (let x = 0; x < width; x += 2) {
-        const freq = isPlaying ? 0.05 : 0.01;
-        const amp = isPlaying ? 35 : 5;
+        const freq = isPlaying ? 0.06 : 0.015;
+        const amp = isPlaying ? 38 : 6;
         const y = height / 2 + Math.sin((x * freq) + phase) * amp * (Math.random() * 0.4 + 0.8);
         if (x === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       }
       ctx.stroke();
 
-      phase += isPlaying ? 0.2 : 0.03;
+      phase += isPlaying ? 0.25 : 0.04;
       animId = requestAnimationFrame(renderOscilloscope);
     };
 
@@ -143,7 +139,7 @@ export default function AudioMatrixWorld() {
   };
 
   return (
-    <div style={{ padding: '2rem 0' }}>
+    <div style={{ padding: '1rem 0' }}>
       {/* Header */}
       <div style={{
         display: 'flex',
@@ -151,64 +147,62 @@ export default function AudioMatrixWorld() {
         alignItems: 'center',
         flexWrap: 'wrap',
         gap: '1rem',
-        marginBottom: '2rem',
+        marginBottom: '1.5rem',
         borderBottom: 'var(--border-thick)',
         paddingBottom: '1rem'
       }}>
         <div>
           <span className="brutal-badge" style={{ background: 'var(--acid-red)', color: '#fff' }}>
-            WORLD 03
+            WORLD 03 // SOUND CONSOLE
           </span>
-          <h1 className="brutal-title" style={{ fontSize: '2.5rem', marginTop: '0.5rem' }}>
+          <h1 className="brutal-title" style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)', marginTop: '0.4rem' }}>
             CONCRETE SOUND MATRIX
           </h1>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.75rem' }}>
-          <button
-            onClick={() => {
-              audioEngine.playClick();
-              setIsPlaying(!isPlaying);
-            }}
-            className={`brutal-btn ${isPlaying ? 'brutal-btn-red' : ''}`}
-          >
-            {isPlaying ? <Square size={18} /> : <Play size={18} />}
-            {isPlaying ? 'STOP SEQUENCER' : 'PLAY SEQUENCER'}
-          </button>
-        </div>
+        <button
+          onClick={() => {
+            audioEngine.playClick();
+            setIsPlaying(!isPlaying);
+          }}
+          className={`brutal-btn ${isPlaying ? 'brutal-btn-red' : ''}`}
+        >
+          {isPlaying ? <Square size={18} /> : <Play size={18} />}
+          {isPlaying ? 'STOP SEQUENCER' : 'PLAY SEQUENCER'}
+        </button>
       </div>
 
       {/* Real-time Oscilloscope Canvas */}
-      <div className="brutal-card" style={{ marginBottom: '2rem', background: '#000000', padding: 0 }}>
+      <div className="brutal-card" style={{ marginBottom: '1.5rem', background: '#050a05', padding: 0 }}>
         <div style={{
-          background: 'var(--bg-tertiary)',
+          background: '#000000',
           padding: '0.5rem 1rem',
           borderBottom: '2px solid #333',
           fontFamily: 'var(--font-mono)',
           fontSize: '0.8rem',
-          fontWeight: 800,
+          fontWeight: 900,
           display: 'flex',
           justifyContent: 'space-between',
           color: 'var(--acid-lime)'
         }}>
-          <span><Radio size={14} style={{ display: 'inline', marginRight: 4 }} /> OSCILLOSCOPE REAL-TIME WAVEFORM</span>
+          <span><Radio size={14} style={{ display: 'inline', marginRight: 4 }} /> WAVEFORM OSCILLOSCOPE (WEB AUDIO API)</span>
           <span>BPM: {bpm} // STATUS: {isPlaying ? 'RUNNING' : 'STANDBY'}</span>
         </div>
-        <canvas ref={canvasRef} width={1200} height={140} style={{ width: '100%', height: '140px', display: 'block' }} />
+        <canvas ref={canvasRef} width={1200} height={130} style={{ width: '100%', height: '130px', display: 'block' }} />
       </div>
 
-      {/* Control Presets & BPM */}
-      <div className="brutal-card" style={{ marginBottom: '2rem' }}>
+      {/* Control Presets & Tempo */}
+      <div className="brutal-card" style={{ marginBottom: '1.5rem' }}>
         <div style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           flexWrap: 'wrap',
-          gap: '1.5rem'
+          gap: '1.25rem'
         }}>
           {/* BPM Slider */}
-          <div style={{ minWidth: '240px' }}>
-            <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--acid-lime)', display: 'block', marginBottom: '0.4rem' }}>
+          <div style={{ minWidth: '220px', flex: 1 }}>
+            <label style={{ fontSize: '0.75rem', fontWeight: 900, color: 'var(--acid-red)', display: 'block', marginBottom: '0.3rem' }}>
               TEMPO BPM ({bpm} BPM)
             </label>
             <input
@@ -221,15 +215,15 @@ export default function AudioMatrixWorld() {
             />
           </div>
 
-          {/* Preset Buttons */}
-          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-            <button className="brutal-btn brutal-btn-outline" style={{ fontSize: '0.75rem', padding: '0.4rem 0.8rem' }} onClick={() => loadPreset('techno')}>
+          {/* Presets */}
+          <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+            <button className="brutal-btn brutal-btn-outline" style={{ fontSize: '0.75rem', padding: '0.4rem 0.75rem' }} onClick={() => loadPreset('techno')}>
               INDUSTRIAL TECHNO
             </button>
-            <button className="brutal-btn brutal-btn-outline" style={{ fontSize: '0.75rem', padding: '0.4rem 0.8rem' }} onClick={() => loadPreset('cyberpunk')}>
+            <button className="brutal-btn brutal-btn-outline" style={{ fontSize: '0.75rem', padding: '0.4rem 0.75rem' }} onClick={() => loadPreset('cyberpunk')}>
               GLITCH CYBERPUNK
             </button>
-            <button className="brutal-btn brutal-btn-red" style={{ fontSize: '0.75rem', padding: '0.4rem 0.8rem' }} onClick={() => loadPreset('clear')}>
+            <button className="brutal-btn brutal-btn-red" style={{ fontSize: '0.75rem', padding: '0.4rem 0.75rem' }} onClick={() => loadPreset('clear')}>
               CLEAR MATRIX
             </button>
           </div>
@@ -237,19 +231,19 @@ export default function AudioMatrixWorld() {
       </div>
 
       {/* 16-step Matrix Grid */}
-      <div className="brutal-card" style={{ background: '#0a0a0a', padding: '1.5rem', overflowX: 'auto' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', minWidth: '700px' }}>
+      <div className="brutal-card" style={{ background: '#0a0a0a', padding: '1.25rem', overflowX: 'auto' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem', minWidth: '650px' }}>
           {grid.map((track, trackIdx) => (
             <div key={trackIdx} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               {/* Instrument Label */}
               <div style={{
-                width: '100px',
+                width: '90px',
                 fontFamily: 'var(--font-heading)',
                 fontWeight: 900,
-                fontSize: '0.9rem',
+                fontSize: '0.85rem',
                 color: trackLabels[trackIdx].color,
                 background: '#000000',
-                padding: '0.4rem 0.6rem',
+                padding: '0.4rem 0.5rem',
                 border: '2px solid #ffffff',
                 textTransform: 'uppercase'
               }}>
@@ -257,7 +251,7 @@ export default function AudioMatrixWorld() {
               </div>
 
               {/* 16 Steps */}
-              <div style={{ display: 'flex', flex: 1, gap: '0.35rem' }}>
+              <div style={{ display: 'flex', flex: 1, gap: '0.3rem' }}>
                 {track.map((active, stepIdx) => {
                   const isCurrent = currentStep === stepIdx && isPlaying;
                   return (
@@ -266,7 +260,7 @@ export default function AudioMatrixWorld() {
                       onClick={() => toggleStep(trackIdx, stepIdx)}
                       style={{
                         flex: 1,
-                        height: '48px',
+                        height: '44px',
                         background: active
                           ? (isCurrent ? '#ffffff' : trackLabels[trackIdx].color)
                           : (isCurrent ? '#333333' : '#1a1a1a'),
@@ -284,7 +278,7 @@ export default function AudioMatrixWorld() {
                           left: '2px',
                           fontSize: '0.55rem',
                           color: active ? '#000000' : '#888888',
-                          fontWeight: 800
+                          fontWeight: 900
                         }}>
                           {stepIdx + 1}
                         </div>

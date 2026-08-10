@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Box, RotateCw, Eye, Sun, Layers } from 'lucide-react';
+import { Box, RotateCw, Eye, Sun, Layers, Grid } from 'lucide-react';
 import { audioEngine } from '../utils/audioEngine';
 
 export default function SpatialVoidWorld() {
@@ -17,7 +17,6 @@ export default function SpatialVoidWorld() {
     const ctx = canvas.getContext('2d');
     let animFrame;
 
-    // Define 3D Cuboid Blocks
     const getBlocks = () => {
       if (primitive === 'monolith') {
         return [
@@ -44,17 +43,14 @@ export default function SpatialVoidWorld() {
       }
     };
 
-    // 3D Perspective Projection
     const project = (x, y, z, rotY) => {
       const rad = (rotY * Math.PI) / 180;
       const cos = Math.cos(rad);
       const sin = Math.sin(rad);
 
-      // Rotate around Y axis
       const rx = x * cos - z * sin;
       const rz = x * sin + z * cos;
 
-      // Pitch tilt
       const pitchRad = (25 * Math.PI) / 180;
       const cosP = Math.cos(pitchRad);
       const sinP = Math.sin(pitchRad);
@@ -62,7 +58,7 @@ export default function SpatialVoidWorld() {
       const ry = y * cosP - rz * sinP;
       const rzFinal = y * sinP + rz * cosP;
 
-      const fov = 400;
+      const fov = 380;
       const scale = fov / (fov + rzFinal + 300);
 
       return {
@@ -74,11 +70,11 @@ export default function SpatialVoidWorld() {
     };
 
     const render = () => {
-      ctx.fillStyle = '#050505';
+      ctx.fillStyle = '#050508';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw background 3D grid plane
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+      // Draw 3D floor grid plane
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
       ctx.lineWidth = 1;
       for (let g = -400; g <= 400; g += 80) {
         const p1 = project(g, 150, -400, angleRef.current);
@@ -95,7 +91,6 @@ export default function SpatialVoidWorld() {
 
       const blocks = getBlocks();
 
-      // Render each block
       blocks.forEach((b) => {
         const expFactor = explode * 1.5;
         const bx = b.x * (1 + expFactor * 0.01);
@@ -106,7 +101,6 @@ export default function SpatialVoidWorld() {
         const halfH = b.h / 2;
         const halfD = b.d / 2;
 
-        // 8 vertices of cuboid
         const vertices = [
           { x: bx - halfW, y: by - halfH, z: bz - halfD },
           { x: bx + halfW, y: by - halfH, z: bz - halfD },
@@ -118,14 +112,13 @@ export default function SpatialVoidWorld() {
           { x: bx - halfW, y: by + halfH, z: bz + halfD }
         ].map(v => project(v.x, v.y, v.z, angleRef.current));
 
-        // 6 faces
         const faces = [
-          { verts: [0, 1, 2, 3], normal: [0, 0, -1], color: '#222' }, // Front
-          { verts: [5, 4, 7, 6], normal: [0, 0, 1], color: '#444' },  // Back
-          { verts: [4, 0, 3, 7], normal: [-1, 0, 0], color: '#333' }, // Left
-          { verts: [1, 5, 6, 2], normal: [1, 0, 0], color: '#555' },  // Right
-          { verts: [4, 5, 1, 0], normal: [0, -1, 0], color: '#777' }, // Top
-          { verts: [3, 2, 6, 7], normal: [0, 1, 0], color: '#111' }   // Bottom
+          { verts: [0, 1, 2, 3], normal: [0, 0, -1] },
+          { verts: [5, 4, 7, 6], normal: [0, 0, 1] },
+          { verts: [4, 0, 3, 7], normal: [-1, 0, 0] },
+          { verts: [1, 5, 6, 2], normal: [1, 0, 0] },
+          { verts: [4, 5, 1, 0], normal: [0, -1, 0] },
+          { verts: [3, 2, 6, 7], normal: [0, 1, 0] }
         ];
 
         faces.forEach(f => {
@@ -137,11 +130,10 @@ export default function SpatialVoidWorld() {
           ctx.closePath();
 
           if (wireframe) {
-            ctx.strokeStyle = 'var(--acid-magenta)';
+            ctx.strokeStyle = '#d946ef';
             ctx.lineWidth = 2;
             ctx.stroke();
           } else {
-            // Lighting calculation
             const lightRad = (lightAngle * Math.PI) / 180;
             const lx = Math.cos(lightRad);
             const lz = Math.sin(lightRad);
@@ -164,7 +156,7 @@ export default function SpatialVoidWorld() {
   }, [autoRotate, explode, lightAngle, wireframe, primitive]);
 
   return (
-    <div style={{ padding: '2rem 0' }}>
+    <div style={{ padding: '1rem 0' }}>
       {/* Header */}
       <div style={{
         display: 'flex',
@@ -172,29 +164,29 @@ export default function SpatialVoidWorld() {
         alignItems: 'center',
         flexWrap: 'wrap',
         gap: '1rem',
-        marginBottom: '2rem',
+        marginBottom: '1.5rem',
         borderBottom: 'var(--border-thick)',
         paddingBottom: '1rem'
       }}>
         <div>
           <span className="brutal-badge" style={{ background: 'var(--acid-magenta)', color: '#fff' }}>
-            WORLD 04
+            WORLD 04 // 3D VOID
           </span>
-          <h1 className="brutal-title" style={{ fontSize: '2.5rem', marginTop: '0.5rem' }}>
+          <h1 className="brutal-title" style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)', marginTop: '0.4rem' }}>
             3D SPATIAL MONOLITH
           </h1>
         </div>
 
-        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
           <button
             onClick={() => {
               audioEngine.playClick();
               setWireframe(!wireframe);
             }}
             className="brutal-btn brutal-btn-outline"
-            style={{ fontSize: '0.8rem', padding: '0.5rem 0.8rem' }}
+            style={{ fontSize: '0.75rem', padding: '0.4rem 0.75rem' }}
           >
-            <Eye size={16} /> WIREFRAME: {wireframe ? 'ON' : 'OFF'}
+            <Eye size={14} /> WIREFRAME: {wireframe ? 'ON' : 'OFF'}
           </button>
 
           <button
@@ -203,26 +195,26 @@ export default function SpatialVoidWorld() {
               setAutoRotate(!autoRotate);
             }}
             className="brutal-btn"
-            style={{ fontSize: '0.8rem', padding: '0.5rem 0.8rem' }}
+            style={{ fontSize: '0.75rem', padding: '0.4rem 0.75rem' }}
           >
-            <RotateCw size={16} /> AUTO ROTATE: {autoRotate ? 'ON' : 'OFF'}
+            <RotateCw size={14} /> ROTATE: {autoRotate ? 'ON' : 'OFF'}
           </button>
         </div>
       </div>
 
-      {/* Control Panel */}
-      <div className="brutal-card" style={{ marginBottom: '2rem' }}>
+      {/* Controls */}
+      <div className="brutal-card" style={{ marginBottom: '1.5rem' }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '1.5rem'
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '1.25rem'
         }}>
-          {/* Primitive Geometry Switcher */}
+          {/* Primitive Switcher */}
           <div>
-            <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--acid-magenta)', display: 'block', marginBottom: '0.4rem' }}>
+            <label style={{ fontSize: '0.75rem', fontWeight: 900, color: 'var(--acid-magenta)', display: 'block', marginBottom: '0.3rem' }}>
               GEOMETRIC MONOLITH MODEL
             </label>
-            <div style={{ display: 'flex', gap: '0.4rem' }}>
+            <div style={{ display: 'flex', gap: '0.3rem' }}>
               {['monolith', 'cubeGrid', 'pyramid'].map((p) => (
                 <button
                   key={p}
@@ -234,11 +226,11 @@ export default function SpatialVoidWorld() {
                     flex: 1,
                     padding: '0.4rem',
                     fontSize: '0.7rem',
-                    fontWeight: 800,
+                    fontWeight: 900,
                     textTransform: 'uppercase',
-                    background: primitive === p ? 'var(--acid-magenta)' : '#000',
-                    color: primitive === p ? '#fff' : '#fff',
-                    border: '2px solid #fff',
+                    background: primitive === p ? 'var(--acid-magenta)' : 'var(--bg-primary)',
+                    color: primitive === p ? '#ffffff' : 'var(--text-primary)',
+                    border: '2px solid var(--text-primary)',
                     cursor: 'pointer'
                   }}
                 >
@@ -248,9 +240,9 @@ export default function SpatialVoidWorld() {
             </div>
           </div>
 
-          {/* Explode Geometry Slider */}
+          {/* Explode Slider */}
           <div>
-            <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--acid-lime)', display: 'block', marginBottom: '0.4rem' }}>
+            <label style={{ fontSize: '0.75rem', fontWeight: 900, color: 'var(--acid-lime)', display: 'block', marginBottom: '0.3rem' }}>
               STRUCTURAL EXPLODE ({explode}%)
             </label>
             <input
@@ -265,7 +257,7 @@ export default function SpatialVoidWorld() {
 
           {/* Light Angle Slider */}
           <div>
-            <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--acid-cyan)', display: 'block', marginBottom: '0.4rem' }}>
+            <label style={{ fontSize: '0.75rem', fontWeight: 900, color: 'var(--acid-cyan)', display: 'block', marginBottom: '0.3rem' }}>
               ORBITAL LIGHT ANGLE ({lightAngle}&deg;)
             </label>
             <input
@@ -282,24 +274,25 @@ export default function SpatialVoidWorld() {
 
       {/* 3D Canvas Viewport */}
       <div style={{
-        background: '#000000',
+        background: '#050508',
         border: '4px solid var(--acid-magenta)',
         boxShadow: '8px 8px 0px var(--acid-magenta)',
         position: 'relative'
       }}>
-        <canvas ref={canvasRef} width={1200} height={520} style={{ width: '100%', height: 'auto', display: 'block' }} />
+        <canvas ref={canvasRef} width={1200} height={500} style={{ width: '100%', height: 'auto', display: 'block' }} />
         <div style={{
           position: 'absolute',
-          top: '1rem',
-          left: '1rem',
+          top: '0.75rem',
+          left: '0.75rem',
           background: 'rgba(0,0,0,0.85)',
           border: '1px solid #ffffff',
-          padding: '0.4rem 0.8rem',
+          padding: '0.35rem 0.7rem',
           fontSize: '0.75rem',
           color: 'var(--acid-magenta)',
-          fontFamily: 'var(--font-mono)'
+          fontFamily: 'var(--font-mono)',
+          fontWeight: 800
         }}>
-          3D VIEWPORT PERSPECTIVE // PERSPECTIVE FOV: 400
+          3D PERSPECTIVE VIEWPORT // FOV: 380
         </div>
       </div>
     </div>

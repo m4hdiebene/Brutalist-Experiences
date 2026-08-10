@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import MarqueeTicker from './components/MarqueeTicker';
 import CustomCursor from './components/CustomCursor';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 
 // Pages / Brutalist World Pages
 import Home from './pages/Home';
@@ -12,15 +13,6 @@ import KineticTypoWorld from './pages/KineticTypoWorld';
 import AudioMatrixWorld from './pages/AudioMatrixWorld';
 import SpatialVoidWorld from './pages/SpatialVoidWorld';
 import AntiDesignWorld from './pages/AntiDesignWorld';
-
-// Scroll to top automatically on route changes
-function ScrollToTop() {
-  const { pathname } = useLocation();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-  return null;
-}
 
 export default function App() {
   const [theme, setTheme] = useState('light'); // Light mode is default base
@@ -31,7 +23,9 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      {/* Scroll to Top handler & Floating TOP button */}
       <ScrollToTop />
+
       <div className="app-container">
         {/* Background Architectural Grid Lines */}
         <div className="grid-overlay" />
@@ -40,10 +34,10 @@ export default function App() {
         <CustomCursor />
 
         {/* Top Continuous Marquee Ticker */}
-        <MarqueeTicker theme={theme} setTheme={setTheme} />
+        <MarqueeTicker theme={theme} />
 
         {/* Multi-world Navigation Header */}
-        <Navbar />
+        <Navbar theme={theme} setTheme={setTheme} />
 
         {/* Main World Page Content Canvas */}
         <main className="main-content">

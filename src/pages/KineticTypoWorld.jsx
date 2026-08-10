@@ -1,21 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Type, Download, Sliders, RefreshCw, Zap } from 'lucide-react';
+import { Type, Download, Sliders, RefreshCw, Zap, Maximize2 } from 'lucide-react';
 import { audioEngine } from '../utils/audioEngine';
 
 export default function KineticTypoWorld() {
-  const [text, setText] = useState('BRUTALIST');
-  const [fontSize, setFontSize] = useState(80);
-  const [warpForce, setWarpForce] = useState(1.2);
+  const [text, setText] = useState('KINETIC');
+  const [fontSize, setFontSize] = useState(90);
+  const [warpForce, setWarpForce] = useState(1.5);
   const [gridCols, setGridCols] = useState(16);
-  const [colorTheme, setColorTheme] = useState('lime'); // lime, cyan, red, mono
+  const [colorMode, setColorMode] = useState('stark'); // stark, neonLime, acidRed, cyan
   const canvasRef = useRef(null);
   const mousePosRef = useRef({ x: -1000, y: -1000 });
 
-  const themeColors = {
-    lime: { fg: '#ccff00', bg: '#0a0a0a', grid: 'rgba(204,255,0,0.15)' },
-    cyan: { fg: '#00ffff', bg: '#0a0a0a', grid: 'rgba(0,255,255,0.15)' },
-    red: { fg: '#ff2e00', bg: '#0a0a0a', grid: 'rgba(255,46,0,0.15)' },
-    mono: { fg: '#ffffff', bg: '#000000', grid: 'rgba(255,255,255,0.15)' }
+  const modes = {
+    stark: { bg: '#ffffff', fg: '#000000', grid: 'rgba(0,0,0,0.12)', border: '#000000' },
+    neonLime: { bg: '#000000', fg: '#ccff00', grid: 'rgba(204,255,0,0.2)', border: '#ccff00' },
+    acidRed: { bg: '#ff2e00', fg: '#ffffff', grid: 'rgba(255,255,255,0.25)', border: '#ffffff' },
+    cyan: { bg: '#000000', fg: '#00ffff', grid: 'rgba(0,255,255,0.2)', border: '#00ffff' }
   };
 
   useEffect(() => {
@@ -24,16 +24,18 @@ export default function KineticTypoWorld() {
     const ctx = canvas.getContext('2d');
     let animationFrameId;
 
+    const currentMode = modes[colorMode];
+
     const render = () => {
-      ctx.fillStyle = themeColors[colorTheme].bg;
+      ctx.fillStyle = currentMode.bg;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const cellW = canvas.width / gridCols;
-      const cellH = canvas.height / 8;
+      const cellH = canvas.height / 6;
 
-      // Draw exposed blueprint grid lines
-      ctx.strokeStyle = themeColors[colorTheme].grid;
-      ctx.lineWidth = 1;
+      // Draw drafting table blueprint grid lines
+      ctx.strokeStyle = currentMode.grid;
+      ctx.lineWidth = 1.5;
       for (let x = 0; x <= canvas.width; x += cellW) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
@@ -48,24 +50,25 @@ export default function KineticTypoWorld() {
       }
 
       // Draw kinetic letters
-      const str = text.toUpperCase() || 'BRUTALIST';
+      const str = text.toUpperCase() || 'KINETIC';
       ctx.font = `900 ${fontSize}px "Space Grotesk", sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
       const letters = str.split('');
-      const startX = (canvas.width - (letters.length * (fontSize * 0.7))) / 2 + (fontSize * 0.35);
+      const letterSpacing = fontSize * 0.75;
+      const startX = (canvas.width - (letters.length * letterSpacing)) / 2 + (letterSpacing / 2);
       const startY = canvas.height / 2;
 
       letters.forEach((char, i) => {
-        let x = startX + i * (fontSize * 0.7);
+        let x = startX + i * letterSpacing;
         let y = startY;
 
-        // Calculate distance from mouse for kinetic repulsion
+        // Calculate vector repulsion distance from mouse
         const dx = mousePosRef.current.x - x;
         const dy = mousePosRef.current.y - y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        const maxDist = 200;
+        const maxDist = 220;
 
         let offsetX = 0;
         let offsetY = 0;
@@ -73,10 +76,10 @@ export default function KineticTypoWorld() {
         let rot = 0;
 
         if (dist < maxDist) {
-          const factor = (1 - dist / maxDist) * warpForce * 40;
+          const factor = (1 - dist / maxDist) * warpForce * 45;
           offsetX = -(dx / dist) * factor;
           offsetY = -(dy / dist) * factor;
-          scale = 1 + (1 - dist / maxDist) * 0.5;
+          scale = 1 + (1 - dist / maxDist) * 0.6;
           rot = ((dx / dist) * factor * Math.PI) / 180;
         }
 
@@ -85,17 +88,17 @@ export default function KineticTypoWorld() {
         ctx.rotate(rot);
         ctx.scale(scale, scale);
 
-        // Hard drop shadow behind letter
-        ctx.fillStyle = '#000000';
-        ctx.fillText(char, 4, 4);
+        // Hard offset shadow
+        ctx.fillStyle = colorMode === 'stark' ? 'rgba(0,0,0,0.15)' : '#000000';
+        ctx.fillText(char, 6, 6);
 
-        // Letter foreground
-        ctx.fillStyle = themeColors[colorTheme].fg;
+        // Main character fill
+        ctx.fillStyle = currentMode.fg;
         ctx.fillText(char, 0, 0);
 
-        // Letter stark stroke
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 2;
+        // Stark vector outline stroke
+        ctx.strokeStyle = colorMode === 'stark' ? '#000000' : '#ffffff';
+        ctx.lineWidth = 3;
         ctx.strokeText(char, 0, 0);
 
         ctx.restore();
@@ -105,11 +108,8 @@ export default function KineticTypoWorld() {
     };
 
     render();
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [text, fontSize, warpForce, gridCols, colorTheme]);
+    return () => cancelAnimationFrame(animationFrameId);
+  }, [text, fontSize, warpForce, gridCols, colorMode]);
 
   const handleMouseMove = (e) => {
     const canvas = canvasRef.current;
@@ -137,7 +137,7 @@ export default function KineticTypoWorld() {
   };
 
   return (
-    <div style={{ padding: '2rem 0' }}>
+    <div style={{ padding: '1rem 0' }}>
       {/* Header */}
       <div style={{
         display: 'flex',
@@ -145,52 +145,51 @@ export default function KineticTypoWorld() {
         alignItems: 'center',
         flexWrap: 'wrap',
         gap: '1rem',
-        marginBottom: '2rem',
+        marginBottom: '1.5rem',
         borderBottom: 'var(--border-thick)',
         paddingBottom: '1rem'
       }}>
         <div>
-          <span className="brutal-badge" style={{ background: themeColors[colorTheme].fg, color: '#000' }}>
-            WORLD 02
+          <span className="brutal-badge" style={{ background: 'var(--acid-cyan)', color: '#000' }}>
+            WORLD 02 // VECTOR LAB
           </span>
-          <h1 className="brutal-title" style={{ fontSize: '2.5rem', marginTop: '0.5rem' }}>
-            KINETIC TYPO & GRID
+          <h1 className="brutal-title" style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)', marginTop: '0.4rem' }}>
+            KINETIC TYPOGRAPHY
           </h1>
         </div>
 
         <button
           onClick={exportPoster}
           className="brutal-btn"
-          style={{ background: themeColors[colorTheme].fg, color: '#000' }}
+          style={{ background: 'var(--acid-lime)', color: '#000' }}
         >
           <Download size={18} /> EXPORT POSTER (PNG)
         </button>
       </div>
 
       {/* Control Dashboard */}
-      <div className="brutal-card" style={{ marginBottom: '2rem', background: 'var(--bg-secondary)' }}>
+      <div className="brutal-card" style={{ marginBottom: '1.5rem' }}>
         <h3 style={{
           fontFamily: 'var(--font-heading)',
           fontSize: '1rem',
           fontWeight: 800,
           marginBottom: '1rem',
-          color: themeColors[colorTheme].fg,
           display: 'flex',
           alignItems: 'center',
           gap: '0.5rem'
         }}>
-          <Sliders size={18} /> VECTOR DEFORMATION CONTROLS
+          <Sliders size={16} /> VECTOR DYNAMICS & DRAFTING PARAMETERS
         </h3>
 
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-          gap: '1.5rem'
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '1.25rem'
         }}>
-          {/* Text Input */}
+          {/* Custom Text Input */}
           <div>
-            <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem' }}>
-              CUSTOM TYPOGRAPHY TEXT
+            <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>
+              TYPE CUSTOM LETTERFORM
             </label>
             <input
               type="text"
@@ -199,16 +198,16 @@ export default function KineticTypoWorld() {
                 setText(e.target.value);
                 audioEngine.playBeep(800, 0.01);
               }}
-              maxLength={14}
+              maxLength={12}
               style={{
                 width: '100%',
-                background: '#000000',
-                border: '2px solid #ffffff',
-                color: themeColors[colorTheme].fg,
+                background: 'var(--bg-primary)',
+                border: '2px solid var(--text-primary)',
+                color: 'var(--text-primary)',
                 padding: '0.5rem 0.8rem',
-                fontFamily: 'var(--font-mono)',
+                fontFamily: 'var(--font-heading)',
                 fontSize: '1rem',
-                fontWeight: 800,
+                fontWeight: 900,
                 outline: 'none'
               }}
             />
@@ -216,12 +215,12 @@ export default function KineticTypoWorld() {
 
           {/* Font Size Slider */}
           <div>
-            <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem' }}>
+            <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>
               FONT SIZE ({fontSize}PX)
             </label>
             <input
               type="range"
-              min="30"
+              min="40"
               max="130"
               value={fontSize}
               onChange={(e) => setFontSize(Number(e.target.value))}
@@ -231,12 +230,12 @@ export default function KineticTypoWorld() {
 
           {/* Warp Force Slider */}
           <div>
-            <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem' }}>
+            <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>
               WARP FORCE ({warpForce})
             </label>
             <input
               type="range"
-              min="0.2"
+              min="0.3"
               max="3.0"
               step="0.1"
               value={warpForce}
@@ -245,32 +244,32 @@ export default function KineticTypoWorld() {
             />
           </div>
 
-          {/* Color Theme Selector */}
+          {/* Color Mode Selector */}
           <div>
-            <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem' }}>
-              PALETTE THEME
+            <label style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--text-muted)', display: 'block', marginBottom: '0.3rem' }}>
+              PALETTE MODE
             </label>
-            <div style={{ display: 'flex', gap: '0.4rem' }}>
-              {['lime', 'cyan', 'red', 'mono'].map((t) => (
+            <div style={{ display: 'flex', gap: '0.3rem' }}>
+              {['stark', 'neonLime', 'acidRed', 'cyan'].map((m) => (
                 <button
-                  key={t}
+                  key={m}
                   onClick={() => {
                     audioEngine.playClick();
-                    setColorTheme(t);
+                    setColorMode(m);
                   }}
                   style={{
                     flex: 1,
                     padding: '0.4rem',
                     fontSize: '0.7rem',
-                    fontWeight: 800,
+                    fontWeight: 900,
                     textTransform: 'uppercase',
-                    background: colorTheme === t ? themeColors[t].fg : '#000',
-                    color: colorTheme === t ? '#000' : '#fff',
-                    border: '2px solid #fff',
+                    background: colorMode === m ? modes[m].fg : 'var(--bg-primary)',
+                    color: colorMode === m ? modes[m].bg : 'var(--text-primary)',
+                    border: '2px solid var(--text-primary)',
                     cursor: 'pointer'
                   }}
                 >
-                  {t}
+                  {m}
                 </button>
               ))}
             </div>
@@ -278,12 +277,13 @@ export default function KineticTypoWorld() {
         </div>
       </div>
 
-      {/* Kinetic Canvas Display */}
+      {/* Kinetic Canvas Viewport */}
       <div style={{
-        background: '#000000',
-        border: `4px solid ${themeColors[colorTheme].fg}`,
-        boxShadow: `8px 8px 0px ${themeColors[colorTheme].fg}`,
-        position: 'relative'
+        background: modes[colorMode].bg,
+        border: `4px solid ${modes[colorMode].border}`,
+        boxShadow: `8px 8px 0px ${modes[colorMode].border}`,
+        position: 'relative',
+        overflow: 'hidden'
       }}>
         <canvas
           ref={canvasRef}
@@ -291,20 +291,21 @@ export default function KineticTypoWorld() {
           height={500}
           onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          style={{ width: '100%', height: 'auto', display: 'block' }}
+          style={{ width: '100%', height: 'auto', display: 'block', cursor: 'crosshair' }}
         />
         <div style={{
           position: 'absolute',
-          bottom: '1rem',
-          right: '1rem',
-          background: 'rgba(0,0,0,0.8)',
+          bottom: '0.75rem',
+          right: '0.75rem',
+          background: 'rgba(0,0,0,0.85)',
           border: '1px solid #ffffff',
-          color: themeColors[colorTheme].fg,
+          color: '#ffffff',
           padding: '0.3rem 0.6rem',
           fontSize: '0.75rem',
-          fontFamily: 'var(--font-mono)'
+          fontFamily: 'var(--font-mono)',
+          fontWeight: 700
         }}>
-          DRAG MOUSE OVER CANVAS TO DISTORT VECTOR TEXT
+          MOVE CURSOR OVER CANVAS TO WARP LETTERFORM VECTORS
         </div>
       </div>
     </div>

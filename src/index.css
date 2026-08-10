@@ -1,45 +1,35 @@
 /* ==========================================================================
-   BRUTALIST DESIGN SYSTEM & DYNAMIC THEME ENGINE (LIGHT MODE BASE)
+   BRUTALIST DESIGN SYSTEM — MULTI-THEME & FULL MOBILE RESPONSIVE
    ========================================================================== */
 
 /* LIGHT MODE (DEFAULT BASE) */
 :root, [data-theme="light"] {
-  /* Base Palette */
-  --bg-primary: #f4f4f0;
+  --bg-primary: #f2f2eb;
   --bg-secondary: #ffffff;
-  --bg-tertiary: #e2e2dc;
+  --bg-tertiary: #e5e5dc;
   --text-primary: #000000;
-  --text-muted: #555555;
+  --text-muted: #444444;
   --text-inverse: #ffffff;
   
-  /* Acid Neons (Optimized for Light Mode High-Contrast) */
-  --acid-lime: #76cc00;
-  --acid-red: #e60000;
-  --acid-cyan: #0088cc;
-  --acid-magenta: #cc00cc;
-  --acid-yellow: #ffcc00;
+  --acid-lime: #a3e635;
+  --acid-red: #ff2e00;
+  --acid-cyan: #06b6d4;
+  --acid-magenta: #d946ef;
+  --acid-yellow: #facc15;
   
-  /* Architectural & Border Tokens */
   --border-thick: 4px solid #000000;
   --border-thin: 2px solid #000000;
-  --border-dark: 4px solid #000000;
-  --border-lime: 4px solid var(--acid-lime);
-  --border-red: 4px solid var(--acid-red);
   
-  /* Hard Drop Shadows (No Blur) */
   --shadow-hard: 6px 6px 0px #000000;
-  --shadow-hard-inverse: 6px 6px 0px #ffffff;
-  --shadow-lime: 6px 6px 0px var(--acid-lime);
-  --shadow-red: 6px 6px 0px var(--acid-red);
-  --shadow-cyan: 6px 6px 0px var(--acid-cyan);
+  --shadow-hard-sm: 4px 4px 0px #000000;
+  --shadow-lime: 6px 6px 0px #a3e635;
+  --shadow-red: 6px 6px 0px #ff2e00;
   
-  /* Typography */
   --font-mono: 'JetBrains Mono', monospace;
   --font-heading: 'Space Grotesk', sans-serif;
   --font-display: 'Syne', sans-serif;
   
-  /* Blueprint Grid */
-  --grid-line-color: rgba(0, 0, 0, 0.06);
+  --grid-line-color: rgba(0, 0, 0, 0.08);
 }
 
 /* DARK MODE OVERRIDE */
@@ -59,19 +49,26 @@
   
   --border-thick: 4px solid #ffffff;
   --border-thin: 2px solid #ffffff;
-  --border-dark: 4px solid #000000;
   
   --shadow-hard: 6px 6px 0px #ffffff;
-  --shadow-hard-inverse: 6px 6px 0px #000000;
+  --shadow-hard-sm: 4px 4px 0px #ffffff;
+  --shadow-lime: 6px 6px 0px #ccff00;
+  --shadow-red: 6px 6px 0px #ff2e00;
   
-  --grid-line-color: rgba(255, 255, 255, 0.04);
+  --grid-line-color: rgba(255, 255, 255, 0.05);
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  cursor: none !important; /* Custom crosshair cursor */
+}
+
+/* Custom cursor active only on desktop mouse pointers */
+@media (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
 }
 
 html, body {
@@ -83,13 +80,13 @@ html, body {
   overflow-x: hidden;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 /* Custom Brutalist Scrollbar */
 ::-webkit-scrollbar {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
 }
 
 ::-webkit-scrollbar-track {
@@ -99,8 +96,8 @@ html, body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--acid-lime);
-  border: 2px solid var(--text-primary);
-  box-shadow: 2px 2px 0px var(--text-primary);
+  border: 2px solid #000000;
+  box-shadow: 2px 2px 0px #000000;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -114,7 +111,7 @@ html, body {
 }
 
 /* ==========================================================================
-   LAYOUT STRUCTURE & GRID SYSTEM
+   LAYOUT STRUCTURE & RESPONSIVE GRID
    ========================================================================== */
 
 .app-container {
@@ -125,18 +122,24 @@ html, body {
   background: 
     linear-gradient(to right, var(--grid-line-color) 1px, transparent 1px),
     linear-gradient(to bottom, var(--grid-line-color) 1px, transparent 1px);
-  background-size: 40px 40px, 40px 40px;
+  background-size: 30px 30px, 30px 30px;
 }
 
 .main-content {
   flex: 1;
   width: 100%;
-  max-width: 1600px;
+  max-width: 1500px;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  padding: 2rem 1.25rem;
 }
 
-/* Exposed Construction Blueprint Grid */
+@media (max-width: 768px) {
+  .main-content {
+    padding: 1.25rem 0.85rem;
+  }
+}
+
+/* Blueprint Grid Overlay */
 .grid-overlay {
   position: fixed;
   inset: 0;
@@ -145,36 +148,37 @@ html, body {
   background-image: 
     linear-gradient(to right, var(--grid-line-color) 1px, transparent 1px),
     linear-gradient(to bottom, var(--grid-line-color) 1px, transparent 1px);
-  background-size: 80px 80px;
+  background-size: 60px 60px;
 }
 
 /* ==========================================================================
-   NEO-BRUTALIST BUTTONS & CONTROLS
+   NEO-BRUTALIST BUTTONS
    ========================================================================== */
 
 .brutal-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1.5rem;
+  gap: 0.6rem;
+  padding: 0.75rem 1.25rem;
   font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 800;
+  font-size: 0.95rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   background: var(--bg-secondary);
   color: var(--text-primary);
   border: var(--border-thick);
   box-shadow: var(--shadow-hard);
-  transition: all 0.1s ease;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
   user-select: none;
   text-decoration: none;
+  cursor: pointer;
 }
 
 .brutal-btn:hover {
   transform: translate(-3px, -3px);
-  box-shadow: 9px 9px 0px var(--acid-lime);
+  box-shadow: 8px 8px 0px var(--acid-lime);
   background: var(--acid-lime);
   color: #000000;
 }
@@ -193,7 +197,7 @@ html, body {
 .brutal-btn-red:hover {
   background: var(--text-primary);
   color: var(--bg-primary);
-  box-shadow: 9px 9px 0px var(--acid-red);
+  box-shadow: 8px 8px 0px var(--acid-red);
 }
 
 .brutal-btn-cyan {
@@ -205,7 +209,7 @@ html, body {
 .brutal-btn-cyan:hover {
   background: var(--acid-magenta);
   color: #ffffff;
-  box-shadow: 9px 9px 0px var(--acid-cyan);
+  box-shadow: 8px 8px 0px var(--acid-cyan);
 }
 
 .brutal-btn-outline {
@@ -218,11 +222,11 @@ html, body {
 .brutal-btn-outline:hover {
   background: var(--text-primary);
   color: var(--bg-primary);
-  box-shadow: 9px 9px 0px var(--acid-lime);
+  box-shadow: 8px 8px 0px var(--acid-lime);
 }
 
 /* ==========================================================================
-   BRUTALIST CARD & CONTAINER UTILITIES
+   BRUTALIST CARDS & UTILITIES
    ========================================================================== */
 
 .brutal-card {
@@ -238,6 +242,13 @@ html, body {
 .brutal-card:hover {
   transform: translate(-4px, -4px);
   box-shadow: 10px 10px 0px var(--acid-lime);
+}
+
+@media (max-width: 600px) {
+  .brutal-card {
+    padding: 1rem;
+    box-shadow: 4px 4px 0px var(--text-primary);
+  }
 }
 
 .brutal-badge {
@@ -276,20 +287,17 @@ html, body {
 .corner-bl { bottom: -5px; left: -5px; }
 .corner-br { bottom: -5px; right: -5px; }
 
-/* ==========================================================================
-   MARQUEE TICKER ANIMATION
-   ========================================================================== */
-
+/* Marquee Container */
 .marquee-container {
   width: 100%;
   overflow: hidden;
   background: var(--acid-lime);
   color: #000000;
   border-bottom: var(--border-thick);
-  padding: 0.5rem 0;
+  padding: 0.4rem 0;
   font-family: var(--font-heading);
   font-weight: 800;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   letter-spacing: 2px;
   text-transform: uppercase;
   white-space: nowrap;
@@ -307,10 +315,7 @@ html, body {
   100% { transform: translateX(-50%); }
 }
 
-/* ==========================================================================
-   CRT SCANLINE & GLITCH FILTERS
-   ========================================================================== */
-
+/* CRT Scanlines */
 .crt-scanlines {
   position: relative;
 }
@@ -327,7 +332,7 @@ html, body {
   opacity: 0.7;
 }
 
-/* Glitch animation text */
+/* Glitch Animation */
 .glitch-text {
   position: relative;
   display: inline-block;
@@ -368,44 +373,50 @@ html, body {
   100% { clip: rect(10px, 9999px, 40px, 0); }
 }
 
-/* Custom Brutalist Crosshair Cursor */
-.custom-cursor-dot {
-  position: fixed;
-  width: 16px;
-  height: 16px;
-  background: var(--acid-lime);
-  border: 2px solid #000;
-  border-radius: 0%;
-  pointer-events: none;
-  z-index: 99999;
-  transform: translate(-50%, -50%);
-  transition: transform 0.05s ease-out, background 0.15s ease;
-  box-shadow: 2px 2px 0px #000000;
+/* Custom Brutalist Cursor */
+@media (pointer: fine) {
+  .custom-cursor-dot {
+    position: fixed;
+    width: 16px;
+    height: 16px;
+    background: var(--acid-lime);
+    border: 2px solid #000;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(-50%, -50%);
+    box-shadow: 2px 2px 0px #000000;
+  }
+
+  .custom-cursor-dot.active {
+    background: var(--acid-red);
+    transform: translate(-50%, -50%) scale(1.5) rotate(45deg);
+  }
+
+  .custom-cursor-coords {
+    position: fixed;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    background: #000000;
+    color: var(--acid-lime);
+    padding: 2px 5px;
+    border: 1px solid var(--acid-lime);
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(14px, 14px);
+    white-space: nowrap;
+  }
 }
 
-.custom-cursor-dot.active {
-  background: var(--acid-red);
-  transform: translate(-50%, -50%) scale(1.6) rotate(45deg);
+@media (pointer: coarse) {
+  .custom-cursor-dot, .custom-cursor-coords {
+    display: none !important;
+  }
 }
 
-.custom-cursor-coords {
-  position: fixed;
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  background: #000000;
-  color: var(--acid-lime);
-  padding: 2px 5px;
-  border: 1px solid var(--acid-lime);
-  pointer-events: none;
-  z-index: 99999;
-  transform: translate(14px, 14px);
-  white-space: nowrap;
-}
-
-/* Section Header Typography */
+/* Section Typography */
 .brutal-title {
   font-family: var(--font-display);
-  font-size: clamp(2.5rem, 6vw, 5.5rem);
+  font-size: clamp(2rem, 6vw, 5rem);
   font-weight: 800;
   line-height: 0.95;
   text-transform: uppercase;
@@ -415,8 +426,8 @@ html, body {
 
 .brutal-sub-title {
   font-family: var(--font-heading);
-  font-size: clamp(1.2rem, 3vw, 2rem);
-  font-weight: 700;
+  font-size: clamp(1.1rem, 3vw, 1.8rem);
+  font-weight: 800;
   text-transform: uppercase;
   color: var(--text-primary);
 }

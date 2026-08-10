@@ -1,31 +1,69 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Terminal, Monitor, RefreshCw, Zap, Trash2, Cpu, ShieldAlert } from 'lucide-react';
+import { Terminal, Monitor, Trash2, Cpu, CornerDownLeft, Play, AlertCircle } from 'lucide-react';
 import { audioEngine } from '../utils/audioEngine';
 
 export default function TerminalWorld() {
   const [history, setHistory] = useState([
-    { type: 'sys', text: 'BRUTALIST OS v4.0.9 [UNIX CYBER-TERMINAL INITIALIZED]' },
-    { type: 'sys', text: 'Type "help" to view available diagnostic commands.' },
-    { type: 'sys', text: '---------------------------------------------------' }
+    { type: 'sys', text: '===================================================' },
+    { type: 'sys', text: 'BRUTALIST OS v4.0.9 // UNIX CYBER TERMINAL' },
+    { type: 'sys', text: 'SYSTEM PHOSPHOR: LIME CRT (144Hz)' },
+    { type: 'sys', text: 'Type "help" to view available execution commands.' },
+    { type: 'sys', text: '===================================================' }
   ]);
   const [inputVal, setInputVal] = useState('');
   const [scanlines, setScanlines] = useState(true);
-  const [theme, setTheme] = useState('lime'); // lime, red, cyan
+  const [crtTheme, setCrtTheme] = useState('green'); // green, amber, cyan
   const terminalEndRef = useRef(null);
+  const canvasRef = useRef(null);
 
-  const themeColors = {
-    lime: 'var(--acid-lime)',
-    red: 'var(--acid-red)',
-    cyan: 'var(--acid-cyan)'
-  };
-
-  const scrollToBottom = () => {
-    terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const themeStyles = {
+    green: { color: '#00ff66', border: '#00ff66', bg: '#030c05' },
+    amber: { color: '#ffb000', border: '#ffb000', bg: '#0c0a00' },
+    cyan: { color: '#00ffff', border: '#00ffff', bg: '#000c0f' }
   };
 
   useEffect(() => {
-    scrollToBottom();
+    terminalEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [history]);
+
+  // Cyber Matrix Rain Background Canvas Effect
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let animId;
+
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = canvas.parentElement.clientHeight;
+
+    const chars = '0123456789ABCDEFBRUTALIST';
+    const fontSize = 14;
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = Array(columns).fill(1);
+
+    const drawMatrix = () => {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = themeStyles[crtTheme].color;
+      ctx.font = `${fontSize}px monospace`;
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars.charAt(Math.floor(Math.random() * chars.length));
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+
+      animId = requestAnimationFrame(drawMatrix);
+    };
+
+    drawMatrix();
+    return () => cancelAnimationFrame(animId);
+  }, [crtTheme]);
 
   const handleCommandSubmit = (e) => {
     e.preventDefault();
@@ -42,32 +80,27 @@ export default function TerminalWorld() {
       case 'help':
         newHist.push({
           type: 'output',
-          text: `AVAILABLE COMMANDS:
-  help              - List commands
-  cat manifesto.txt - Print architectural manifesto
-  matrix            - Initiate cyber binary stream
-  glitch            - Trigger audio glitch & visual warp
-  ascii             - Output concrete ASCII monolith
-  diag              - System memory & CPU telemetry
-  color <hex>       - Set prompt color custom hex
-  theme <lime|red|cyan> - Switch color theme
-  clear             - Flush terminal screen`
+          text: `COMMAND REGISTRY:
+  help              - Display command index
+  manifesto         - Output brutalist digital rules
+  matrix            - Trigger binary code cascade
+  glitch            - Execute audio synth distortion
+  ascii             - Render concrete architectural tower
+  diag              - System memory & CPU dump
+  theme <green|amber|cyan> - Change CRT phosphor tone
+  clear             - Flush terminal log`
         });
         break;
 
-      case 'cat':
-        if (parts[1] === 'manifesto.txt') {
-          newHist.push({
-            type: 'output',
-            text: `[MANIFESTO.TXT]
-1. EXPOSE STRUCTURE: RAW COLUMNS, ZERO SOFTENING.
-2. MECHANICAL AUDIO: FEEDBACK ON EVERY CLICK.
-3. STARK CONTRAST: MONOCHROME & HIGH VOLTAGE ACID ACCENTS.
-4. UNFORGIVING ARCHITECTURE: FUNCTION OVER ALL.`
-          });
-        } else {
-          newHist.push({ type: 'error', text: `File not found: ${parts[1] || 'unspecified'}` });
-        }
+      case 'manifesto':
+        newHist.push({
+          type: 'output',
+          text: `[BRUTALIST DIGITAL RULES]
+1. HIDE NO SKELETON: Gridlines, borders, parameters exposed.
+2. SENSORY AUDIO: Web Audio API synthesis on every trigger.
+3. HIGH STARK CONTRAST: Sharp monochrome & high-voltage accents.
+4. RADICAL DIFFERENCE: Every page is a distinct universe.`
+        });
         break;
 
       case 'matrix':
@@ -76,13 +109,13 @@ export default function TerminalWorld() {
           type: 'output',
           text: `01000010 01010010 01010101 01010100 01000001 01001100 01001001 01010011 01010100
 10110100 11001010 10101011 00101101 11010101 01010101 11100101 00010111 10101010
-[STREAM COMPLETED: 256 BYTES TRANSMITTED]`
+[CASCADE EXECUTED // 1024 BYTES DUMPED]`
         });
         break;
 
       case 'glitch':
         audioEngine.playGlitch();
-        newHist.push({ type: 'output', text: '!!! SYSTEM GLITCH TRIGGERED !!!' });
+        newHist.push({ type: 'output', text: '>>> WARNING: SYNTHETIC FREQUENCY GLITCH DISPATCHED <<<' });
         break;
 
       case 'ascii':
@@ -90,36 +123,34 @@ export default function TerminalWorld() {
         newHist.push({
           type: 'output',
           text: `
-  +-----------------------+
-  |  BRUTALIST MONOLITH   |
-  |  ===================  |
-  |  |   |   |   |   |   ||
-  |  |   |   |   |   |   ||
-  |  |   |   |   |   |   ||
-  |  +---+---+---+---+---+|
-  |  [EXPOSED CONCRETE]  |
-  +-----------------------+`
+    _______________________________________
+   /                                       \\
+  |   +---------------------------------+   |
+  |   |   BRUTALIST TERMINAL MONOLITH   |   |
+  |   |   ===========================   |   |
+  |   |   [X] [X] [X] [X] [X] [X] [X]   |   |
+  |   +---------------------------------+   |
+   \\_______________________________________/`
         });
         break;
 
       case 'diag':
         newHist.push({
           type: 'output',
-          text: `TELEMETRY DUMP:
-  CPU ALLOCATION: 4.2%
-  MEMORY USED: 64MB / 1024MB
+          text: `SYSTEM DUMP:
+  CPU CORE: 2.1% LOAD
+  RAM ALLOCATED: 184MB / 4096MB
   AUDIO SYNTH: ONLINE (WebAudioAPI)
-  FPS RATE: 144.0 FPS
-  GRID REASONING: OPTIMAL`
+  FPS: 144Hz`
         });
         break;
 
       case 'theme':
-        if (['lime', 'red', 'cyan'].includes(parts[1])) {
-          setTheme(parts[1]);
-          newHist.push({ type: 'output', text: `Theme updated to: ${parts[1].toUpperCase()}` });
+        if (['green', 'amber', 'cyan'].includes(parts[1])) {
+          setCrtTheme(parts[1]);
+          newHist.push({ type: 'output', text: `CRT Phosphor color changed to: ${parts[1].toUpperCase()}` });
         } else {
-          newHist.push({ type: 'error', text: 'Invalid theme. Use: theme lime | theme red | theme cyan' });
+          newHist.push({ type: 'error', text: 'Usage: theme green | theme amber | theme cyan' });
         }
         break;
 
@@ -130,7 +161,7 @@ export default function TerminalWorld() {
 
       default:
         audioEngine.playBeep(300, 0.1);
-        newHist.push({ type: 'error', text: `Command not recognized: "${cmd}". Type "help" for command list.` });
+        newHist.push({ type: 'error', text: `Command "${cmd}" not recognized. Type "help" for list.` });
         break;
     }
 
@@ -139,102 +170,132 @@ export default function TerminalWorld() {
   };
 
   return (
-    <div style={{ padding: '2rem 0' }}>
-      {/* Header */}
+    <div style={{
+      background: '#000000',
+      color: themeStyles[crtTheme].color,
+      padding: '1.5rem',
+      border: `6px solid ${themeStyles[crtTheme].border}`,
+      boxShadow: `12px 12px 0px ${themeStyles[crtTheme].border}`,
+      minHeight: '80vh',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
+      {/* Top Header Bar */}
       <div style={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         flexWrap: 'wrap',
         gap: '1rem',
-        marginBottom: '2rem',
-        borderBottom: 'var(--border-thick)',
-        paddingBottom: '1rem'
+        borderBottom: `3px solid ${themeStyles[crtTheme].border}`,
+        paddingBottom: '1rem',
+        marginBottom: '1rem'
       }}>
-        <div>
-          <span className="brutal-badge" style={{ background: themeColors[theme] }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{
+            background: themeStyles[crtTheme].border,
+            color: '#000',
+            padding: '0.3rem 0.6rem',
+            fontFamily: 'var(--font-mono)',
+            fontWeight: 900,
+            fontSize: '0.8rem'
+          }}>
             WORLD 01
-          </span>
-          <h1 className="brutal-title" style={{ fontSize: '2.5rem', marginTop: '0.5rem' }}>
+          </div>
+          <h1 style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(1.5rem, 3.5vw, 2.5rem)',
+            fontWeight: 900,
+            textTransform: 'uppercase',
+            color: themeStyles[crtTheme].color
+          }}>
             CYBER TERMINAL CLI
           </h1>
         </div>
 
-        {/* Controls */}
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+        {/* Phosphor Controls */}
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          {['green', 'amber', 'cyan'].map(t => (
+            <button
+              key={t}
+              onClick={() => {
+                audioEngine.playClick();
+                setCrtTheme(t);
+              }}
+              style={{
+                padding: '0.3rem 0.6rem',
+                fontSize: '0.75rem',
+                fontWeight: 900,
+                textTransform: 'uppercase',
+                background: crtTheme === t ? themeStyles[t].border : '#000000',
+                color: crtTheme === t ? '#000000' : themeStyles[t].color,
+                border: `2px solid ${themeStyles[t].border}`,
+                cursor: 'pointer'
+              }}
+            >
+              {t}
+            </button>
+          ))}
+
           <button
             onClick={() => {
               audioEngine.playClick();
               setScanlines(!scanlines);
             }}
-            className="brutal-btn brutal-btn-outline"
-            style={{ fontSize: '0.8rem', padding: '0.5rem 0.8rem' }}
-          >
-            <Monitor size={16} /> CRT SCANLINES: {scanlines ? 'ON' : 'OFF'}
-          </button>
-
-          <button
-            onClick={() => {
-              audioEngine.playClick();
-              setHistory([]);
+            style={{
+              padding: '0.3rem 0.6rem',
+              fontSize: '0.75rem',
+              fontWeight: 900,
+              background: '#000000',
+              color: themeStyles[crtTheme].color,
+              border: `2px solid ${themeStyles[crtTheme].border}`,
+              cursor: 'pointer'
             }}
-            className="brutal-btn brutal-btn-red"
-            style={{ fontSize: '0.8rem', padding: '0.5rem 0.8rem' }}
           >
-            <Trash2 size={16} /> CLEAR
+            <Monitor size={14} style={{ display: 'inline', marginRight: 4 }} /> SCANLINES: {scanlines ? 'ON' : 'OFF'}
           </button>
         </div>
       </div>
 
-      {/* Terminal Screen Container */}
+      {/* Screen Frame */}
       <div className={scanlines ? 'crt-scanlines' : ''} style={{
-        background: '#050505',
-        border: `4px solid ${themeColors[theme]}`,
-        boxShadow: `8px 8px 0px ${themeColors[theme]}`,
-        minHeight: '550px',
-        maxHeight: '650px',
+        flex: 1,
+        background: themeStyles[crtTheme].bg,
+        border: `3px solid ${themeStyles[crtTheme].border}`,
+        position: 'relative',
         display: 'flex',
         flexDirection: 'column',
-        position: 'relative'
+        overflow: 'hidden'
       }}>
-        {/* Terminal Header Bar */}
-        <div style={{
-          background: themeColors[theme],
-          color: '#000000',
-          padding: '0.5rem 1rem',
-          fontFamily: 'var(--font-mono)',
-          fontWeight: 800,
-          fontSize: '0.85rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Terminal size={16} /> ROOT@BRUTALIST-OS:~ (TTY1)
-          </div>
-          <div>BAUD: 115200 // MONO</div>
-        </div>
+        {/* Matrix Canvas Layer */}
+        <canvas ref={canvasRef} style={{
+          position: 'absolute',
+          inset: 0,
+          opacity: 0.15,
+          pointerEvents: 'none'
+        }} />
 
-        {/* Terminal Content Stream */}
+        {/* Terminal Window Content */}
         <div style={{
           flex: 1,
-          padding: '1.5rem',
+          padding: '1.25rem',
           overflowY: 'auto',
           fontFamily: 'var(--font-mono)',
-          fontSize: '0.95rem',
-          lineHeight: '1.6'
+          fontSize: '0.92rem',
+          lineHeight: '1.6',
+          zIndex: 2
         }}>
           {history.map((item, idx) => (
             <div key={idx} style={{ marginBottom: '0.5rem' }}>
               {item.type === 'user' && (
-                <span style={{ color: themeColors[theme], fontWeight: 700 }}>{item.text}</span>
+                <span style={{ fontWeight: 900, color: themeStyles[crtTheme].color }}>{item.text}</span>
               )}
               {item.type === 'sys' && (
-                <span style={{ color: '#888888' }}>{item.text}</span>
+                <span style={{ opacity: 0.7 }}>{item.text}</span>
               )}
               {item.type === 'output' && (
                 <pre style={{
-                  color: '#ffffff',
+                  color: themeStyles[crtTheme].color,
                   whiteSpace: 'pre-wrap',
                   fontFamily: 'inherit',
                   margin: 0
@@ -243,24 +304,24 @@ export default function TerminalWorld() {
                 </pre>
               )}
               {item.type === 'error' && (
-                <span style={{ color: 'var(--acid-red)', fontWeight: 700 }}>{item.text}</span>
+                <span style={{ color: 'var(--acid-red)', fontWeight: 900 }}>{item.text}</span>
               )}
             </div>
           ))}
           <div ref={terminalEndRef} />
         </div>
 
-        {/* Terminal Input Form */}
+        {/* Command Form Input */}
         <form onSubmit={handleCommandSubmit} style={{
           display: 'flex',
-          borderTop: `2px solid ${themeColors[theme]}`,
-          background: '#0a0a0a'
+          borderTop: `2px solid ${themeStyles[crtTheme].border}`,
+          background: '#000000',
+          zIndex: 2
         }}>
           <span style={{
-            padding: '0.8rem 1rem',
-            color: themeColors[theme],
-            fontWeight: 800,
-            fontFamily: 'var(--font-mono)'
+            padding: '0.75rem 1rem',
+            fontWeight: 900,
+            color: themeStyles[crtTheme].color
           }}>
             root@brutalist:~#
           </span>
@@ -269,18 +330,18 @@ export default function TerminalWorld() {
             value={inputVal}
             onChange={(e) => {
               setInputVal(e.target.value);
-              audioEngine.playBeep(1000, 0.01);
+              audioEngine.playBeep(1100, 0.01);
             }}
-            placeholder="Type command ('help', 'matrix', 'ascii', 'diag')..."
+            placeholder="Type command ('help', 'matrix', 'ascii', 'manifesto', 'diag')..."
             style={{
               flex: 1,
               background: 'transparent',
               border: 'none',
               outline: 'none',
-              color: '#ffffff',
+              color: themeStyles[crtTheme].color,
               fontFamily: 'var(--font-mono)',
               fontSize: '1rem',
-              fontWeight: 600,
+              fontWeight: 700,
               paddingRight: '1rem'
             }}
             autoFocus
@@ -288,16 +349,19 @@ export default function TerminalWorld() {
           <button
             type="submit"
             style={{
-              background: themeColors[theme],
+              background: themeStyles[crtTheme].border,
               color: '#000000',
               border: 'none',
-              padding: '0 1.5rem',
-              fontWeight: 800,
+              padding: '0 1.25rem',
+              fontWeight: 900,
               fontFamily: 'var(--font-mono)',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.3rem'
             }}
           >
-            EXEC
+            EXEC <CornerDownLeft size={14} />
           </button>
         </form>
       </div>
