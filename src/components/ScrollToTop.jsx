@@ -7,13 +7,12 @@ export default function ScrollToTop() {
   const { pathname } = useLocation();
   const [visible, setVisible] = useState(false);
 
-  // 1. Automatic Reset Scroll on Route Navigation
+  // 1. Reset Scroll Position on Route Changes
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
     
-    // Backup micro-task to ensure DOM has rendered
     const timer = setTimeout(() => {
       window.scrollTo(0, 0);
       document.documentElement.scrollTop = 0;
@@ -23,10 +22,11 @@ export default function ScrollToTop() {
     return () => clearTimeout(timer);
   }, [pathname]);
 
-  // 2. Monitor Scroll Position for Floating TOP Button
+  // 2. Floating TOP Button - ONLY Enabled on Project World Pages (pathname !== '/')
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 250) {
+      // Never show TOP button on Homepage (/)
+      if (pathname !== '/' && window.scrollY > 250) {
         setVisible(true);
       } else {
         setVisible(false);
@@ -35,14 +35,15 @@ export default function ScrollToTop() {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [pathname]);
+
+  // Do not render floating TOP button on Homepage
+  if (pathname === '/' || !visible) return null;
 
   const scrollToTopManual = () => {
     audioEngine.playClick();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-  if (!visible) return null;
 
   return (
     <button
