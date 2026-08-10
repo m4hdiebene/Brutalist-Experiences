@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Box, RotateCw, Eye, Sun, Layers, Grid } from 'lucide-react';
+import { Box, RotateCw, Eye, Sun, Layers, Grid, Sparkles } from 'lucide-react';
 import { audioEngine } from '../utils/audioEngine';
 
 export default function SpatialVoidWorld() {
@@ -20,25 +20,36 @@ export default function SpatialVoidWorld() {
     const getBlocks = () => {
       if (primitive === 'monolith') {
         return [
-          { x: 0, y: -60, z: 0, w: 100, h: 160, d: 100 },
-          { x: 0, y: 70, z: 0, w: 140, h: 40, d: 140 },
-          { x: 0, y: -160, z: 0, w: 60, h: 40, d: 60 }
+          { x: 0, y: -40, z: 0, w: 120, h: 180, d: 120, color: '#ccff00' },
+          { x: 0, y: 85, z: 0, w: 160, h: 45, d: 160, color: '#ff2e00' },
+          { x: 0, y: -155, z: 0, w: 80, h: 45, d: 80, color: '#00ffff' }
         ];
       } else if (primitive === 'cubeGrid') {
         const blocks = [];
+        const colors = ['#ccff00', '#ff2e00', '#00ffff', '#ff00ff', '#fff500'];
+        let cIdx = 0;
         for (let ix = -1; ix <= 1; ix++) {
           for (let iy = -1; iy <= 1; iy++) {
-            blocks.push({ x: ix * 70, y: iy * 70, z: 0, w: 50, h: 50, d: 50 });
+            blocks.push({
+              x: ix * 75,
+              y: iy * 75,
+              z: 0,
+              w: 55,
+              h: 55,
+              d: 55,
+              color: colors[cIdx % colors.length]
+            });
+            cIdx++;
           }
         }
         return blocks;
       } else {
         return [
-          { x: 0, y: 80, z: 0, w: 180, h: 40, d: 180 },
-          { x: 0, y: 30, z: 0, w: 140, h: 40, d: 140 },
-          { x: 0, y: -20, z: 0, w: 100, h: 40, d: 100 },
-          { x: 0, y: -70, z: 0, w: 60, h: 40, d: 60 },
-          { x: 0, y: -110, z: 0, w: 20, h: 40, d: 20 }
+          { x: 0, y: 90, z: 0, w: 200, h: 40, d: 200, color: '#ff2e00' },
+          { x: 0, y: 40, z: 0, w: 150, h: 40, d: 150, color: '#ccff00' },
+          { x: 0, y: -10, z: 0, w: 110, h: 40, d: 110, color: '#00ffff' },
+          { x: 0, y: -60, z: 0, w: 70, h: 40, d: 70, color: '#ff00ff' },
+          { x: 0, y: -105, z: 0, w: 30, h: 40, d: 30, color: '#fff500' }
         ];
       }
     };
@@ -51,15 +62,15 @@ export default function SpatialVoidWorld() {
       const rx = x * cos - z * sin;
       const rz = x * sin + z * cos;
 
-      const pitchRad = (25 * Math.PI) / 180;
+      const pitchRad = (22 * Math.PI) / 180;
       const cosP = Math.cos(pitchRad);
       const sinP = Math.sin(pitchRad);
 
       const ry = y * cosP - rz * sinP;
       const rzFinal = y * sinP + rz * cosP;
 
-      const fov = 380;
-      const scale = fov / (fov + rzFinal + 300);
+      const fov = 420;
+      const scale = fov / (fov + rzFinal + 280);
 
       return {
         x: canvas.width / 2 + rx * scale,
@@ -70,15 +81,15 @@ export default function SpatialVoidWorld() {
     };
 
     const render = () => {
-      ctx.fillStyle = '#050508';
+      ctx.fillStyle = '#0a0a0f';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw 3D floor grid plane
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
-      ctx.lineWidth = 1;
-      for (let g = -400; g <= 400; g += 80) {
-        const p1 = project(g, 150, -400, angleRef.current);
-        const p2 = project(g, 150, 400, angleRef.current);
+      // 3D Perspective Grid Plane
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+      ctx.lineWidth = 1.5;
+      for (let g = -500; g <= 500; g += 70) {
+        const p1 = project(g, 160, -500, angleRef.current);
+        const p2 = project(g, 160, 500, angleRef.current);
         ctx.beginPath();
         ctx.moveTo(p1.x, p1.y);
         ctx.lineTo(p2.x, p2.y);
@@ -86,13 +97,14 @@ export default function SpatialVoidWorld() {
       }
 
       if (autoRotate) {
-        angleRef.current = (angleRef.current + 0.8) % 360;
+        angleRef.current = (angleRef.current + 0.9) % 360;
       }
 
       const blocks = getBlocks();
 
-      blocks.forEach((b) => {
-        const expFactor = explode * 1.5;
+      // Sort blocks by depth (Z-index back-to-front)
+      const projectedBlocks = blocks.map((b) => {
+        const expFactor = explode * 1.6;
         const bx = b.x * (1 + expFactor * 0.01);
         const by = b.y * (1 + expFactor * 0.01);
         const bz = b.z * (1 + expFactor * 0.01);
@@ -101,7 +113,7 @@ export default function SpatialVoidWorld() {
         const halfH = b.h / 2;
         const halfD = b.d / 2;
 
-        const vertices = [
+        const verts = [
           { x: bx - halfW, y: by - halfH, z: bz - halfD },
           { x: bx + halfW, y: by - halfH, z: bz - halfD },
           { x: bx + halfW, y: by + halfH, z: bz - halfD },
@@ -112,6 +124,13 @@ export default function SpatialVoidWorld() {
           { x: bx - halfW, y: by + halfH, z: bz + halfD }
         ].map(v => project(v.x, v.y, v.z, angleRef.current));
 
+        const centerProj = project(bx, by, bz, angleRef.current);
+
+        return { b, verts, centerZ: centerProj.z };
+      }).sort((a, b) => b.centerZ - a.centerZ);
+
+      // Render 3D Blocks
+      projectedBlocks.forEach(({ b, verts }) => {
         const faces = [
           { verts: [0, 1, 2, 3], normal: [0, 0, -1] },
           { verts: [5, 4, 7, 6], normal: [0, 0, 1] },
@@ -123,26 +142,31 @@ export default function SpatialVoidWorld() {
 
         faces.forEach(f => {
           ctx.beginPath();
-          ctx.moveTo(f.verts[0].x, f.verts[0].y);
+          ctx.moveTo(verts[f.verts[0]].x, verts[f.verts[0]].y);
           for (let i = 1; i < f.verts.length; i++) {
-            ctx.lineTo(f.verts[i].x, f.verts[i].y);
+            ctx.lineTo(verts[f.verts[i]].x, verts[f.verts[i]].y);
           }
           ctx.closePath();
 
           if (wireframe) {
-            ctx.strokeStyle = '#d946ef';
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = b.color;
+            ctx.lineWidth = 3;
             ctx.stroke();
           } else {
+            // Lighting calculation with high ambient minimum (0.4)
             const lightRad = (lightAngle * Math.PI) / 180;
             const lx = Math.cos(lightRad);
             const lz = Math.sin(lightRad);
-            const dot = Math.max(0.15, (f.normal[0] * lx + f.normal[2] * lz));
+            const dot = Math.max(0.45, Math.abs(f.normal[0] * lx + f.normal[2] * lz));
 
-            ctx.fillStyle = `rgb(${Math.floor(255 * dot)}, ${Math.floor(255 * dot)}, ${Math.floor(255 * dot)})`;
+            ctx.fillStyle = b.color;
+            ctx.globalAlpha = dot;
             ctx.fill();
+            ctx.globalAlpha = 1.0;
+
+            // Stark Black Face Border Stroke
             ctx.strokeStyle = '#000000';
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 3;
             ctx.stroke();
           }
         });
@@ -170,7 +194,7 @@ export default function SpatialVoidWorld() {
       }}>
         <div>
           <span className="brutal-badge" style={{ background: 'var(--acid-magenta)', color: '#fff' }}>
-            WORLD 04 // 3D VOID
+            WORLD 04 // 3D SPATIAL VOID
           </span>
           <h1 className="brutal-title" style={{ fontSize: 'clamp(1.8rem, 4vw, 3rem)', marginTop: '0.4rem' }}>
             3D SPATIAL MONOLITH
@@ -202,7 +226,7 @@ export default function SpatialVoidWorld() {
         </div>
       </div>
 
-      {/* Controls */}
+      {/* Control Dashboard */}
       <div className="brutal-card" style={{ marginBottom: '1.5rem' }}>
         <div style={{
           display: 'grid',
@@ -212,7 +236,7 @@ export default function SpatialVoidWorld() {
           {/* Primitive Switcher */}
           <div>
             <label style={{ fontSize: '0.75rem', fontWeight: 900, color: 'var(--acid-magenta)', display: 'block', marginBottom: '0.3rem' }}>
-              GEOMETRIC MONOLITH MODEL
+              GEOMETRIC MODEL
             </label>
             <div style={{ display: 'flex', gap: '0.3rem' }}>
               {['monolith', 'cubeGrid', 'pyramid'].map((p) => (
@@ -274,12 +298,12 @@ export default function SpatialVoidWorld() {
 
       {/* 3D Canvas Viewport */}
       <div style={{
-        background: '#050508',
+        background: '#0a0a0f',
         border: '4px solid var(--acid-magenta)',
         boxShadow: '8px 8px 0px var(--acid-magenta)',
         position: 'relative'
       }}>
-        <canvas ref={canvasRef} width={1200} height={500} style={{ width: '100%', height: 'auto', display: 'block' }} />
+        <canvas ref={canvasRef} width={1200} height={520} style={{ width: '100%', height: 'auto', display: 'block' }} />
         <div style={{
           position: 'absolute',
           top: '0.75rem',
@@ -292,7 +316,7 @@ export default function SpatialVoidWorld() {
           fontFamily: 'var(--font-mono)',
           fontWeight: 800
         }}>
-          3D PERSPECTIVE VIEWPORT // FOV: 380
+          3D PERSPECTIVE VIEWPORT // 144FPS CANVAS ENGINE
         </div>
       </div>
     </div>
